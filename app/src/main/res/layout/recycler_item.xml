@@ -1,0 +1,25 @@
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="text"
+            type="String" />
+    </data>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp" >
+
+        <TextView
+            android:id="@+id/first"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="@{text}"
+            tools:text="text" />
+    </RelativeLayout>
+</layout>

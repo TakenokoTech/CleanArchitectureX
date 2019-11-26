@@ -4,30 +4,50 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_top.*
 import org.koin.android.ext.android.inject
 import tech.takenoko.cleanarchitecturex.R
+import tech.takenoko.cleanarchitecturex.databinding.FragmentTopBinding
+import tech.takenoko.cleanarchitecturex.utils.AppLog
 import tech.takenoko.cleanarchitecturex.viewmodel.TopViewModel
+
 
 class TopFragment : Fragment() {
 
     private val viewModel: TopViewModel by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AppLog.info(TAG, "onCreate")
         super.onCreate(savedInstanceState)
-        onBinding()
 
         viewModel.load()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_top, container, false)
+        AppLog.info(TAG, "onCreateView")
+        val binding = DataBindingUtil.inflate<FragmentTopBinding>(inflater, R.layout.fragment_top, container, false).apply {
+            lifecycleOwner = this@TopFragment
+            viewmodel = viewModel
+            adapter = RecyclerViewAdapter()
+        }
+        return binding.root
     }
 
-    private fun onBinding() {
-        viewModel.text1.observe(this, Observer { text1.text = it })
+    override fun onResume() {
+        AppLog.info(TAG, "onResume")
+        super.onResume()
+        setupRecyclerView()
+    }
+
+    private fun setupRecyclerView() {
+        val adapter = RecyclerViewAdapter()
+        recycler.layoutManager = LinearLayoutManager(context)
+        recycler.adapter = adapter
+        viewModel.list1.observe(this, Observer { list -> adapter.setItem(list) })
     }
 
     companion object {

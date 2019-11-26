@@ -2,6 +2,7 @@ package tech.takenoko.cleanarchitecturex.di
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.CoroutineScope
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import tech.takenoko.cleanarchitecturex.repository.UserRepository
@@ -17,7 +18,7 @@ val viewmodelModules = module {
 }
 
 val usecaseModules = module {
-    factory { LoadUserUsecase(androidContext() as Application, it.get<ViewModel>() as ViewModel) }
+    factory { LoadUserUsecase(androidContext() as Application, it.get<CoroutineScope>() as CoroutineScope) }
 }
 
 val repositoryModules = module {
