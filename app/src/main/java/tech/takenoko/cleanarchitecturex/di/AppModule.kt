@@ -7,20 +7,39 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import tech.takenoko.cleanarchitecturex.repository.UserRepository
 import tech.takenoko.cleanarchitecturex.repository.UserRepositoryImpl
+import tech.takenoko.cleanarchitecturex.repository.dao.UserLocalDataSource
+import tech.takenoko.cleanarchitecturex.repository.network.UserRemoteDataSource
 import tech.takenoko.cleanarchitecturex.usecase.LoadUserUsecase
 import tech.takenoko.cleanarchitecturex.viewmodel.TopViewModel
 
-val appModule = module {
+private val appModule = module {
 }
 
-val viewmodelModules = module {
+private val viewmodelModules = module {
     factory { TopViewModel() }
 }
 
-val usecaseModules = module {
+private val usecaseModules = module {
     factory { LoadUserUsecase(androidContext() as Application, it.get<CoroutineScope>() as CoroutineScope) }
 }
 
-val repositoryModules = module {
+private val repositoryModules = module {
     factory { UserRepositoryImpl(androidContext() as Application) as UserRepository }
 }
+
+private val localModules = module {
+    single { UserLocalDataSource(androidContext() as Application) }
+}
+
+private val remoteModules = module {
+    single { UserRemoteDataSource(androidContext() as Application) }
+}
+
+val diModules = listOf(
+    appModule,
+    viewmodelModules,
+    usecaseModules,
+    repositoryModules,
+    localModules,
+    remoteModules
+)

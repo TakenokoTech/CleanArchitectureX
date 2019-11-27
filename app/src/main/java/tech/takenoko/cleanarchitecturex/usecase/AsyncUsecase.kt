@@ -2,6 +2,8 @@ package tech.takenoko.cleanarchitecturex.usecase
 
 import android.content.Context
 import android.util.Log
+import androidx.annotation.MainThread
+import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
@@ -16,18 +18,22 @@ abstract class AsyncUsecase<Q: Any, P: Any>(private val context: Context, privat
     private var result = MediatorLiveData<UsecaseResult<P>>()
     val source: LiveData<UsecaseResult<P>> = result
 
+    @MainThread
     fun execute(param: Q) {
         result.postValue(UsecaseResult.Pending())
-        runCatching {
-            scope.launch {
-                result.postValue(UsecaseResult.Resolved(callAsync(param).await()))
-            }
-        }.onFailure {
-            AppLog.warn(TAG,it)
-            result.postValue(UsecaseResult.Rejected(it))
+        scope.launch {
+            runCatching {
+                callAsync(param).await()
+            }.fold({
+                result.postValue(UsecaseResult.Resolved(it))
+            }, {
+                AppLog.warn(TAG,it)
+                result.postValue(UsecaseResult.Rejected(it))
+            })
         }
     }
 
+    @WorkerThread
     protected abstract suspend fun callAsync(param: Q): Deferred<P>
 
     companion object {
