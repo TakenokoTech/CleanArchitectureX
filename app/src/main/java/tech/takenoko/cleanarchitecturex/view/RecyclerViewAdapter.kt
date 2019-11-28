@@ -38,4 +38,3 @@ class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerViewAdapter.BindingHold
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = old[oldItemPosition] == new[newItemPosition]
     }
 }
-

@@ -1,4 +1,4 @@
-package tech.takenoko.cleanarchitecturex.repository.dao
+package tech.takenoko.cleanarchitecturex.repository.local
 
 import androidx.lifecycle.LiveData
 import androidx.room.*

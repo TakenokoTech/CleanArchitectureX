@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.annotation.WorkerThread
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import tech.takenoko.cleanarchitecturex.repository.dao.User
-import tech.takenoko.cleanarchitecturex.repository.dao.UserLocalDataSource
+import tech.takenoko.cleanarchitecturex.repository.local.User
+import tech.takenoko.cleanarchitecturex.repository.local.UserLocalDataSource
 import tech.takenoko.cleanarchitecturex.repository.network.UserRemoteDataSource
 import tech.takenoko.cleanarchitecturex.utils.AppLog
 import java.util.*
@@ -19,17 +19,16 @@ class UserRepositoryImpl(context: Context): UserRepository, KoinComponent {
     @WorkerThread
     override suspend fun getAllUser(): List<User> {
         AppLog.info(TAG, "getAllUser")
-//        val users = network.getUser().map { User(UUID.randomUUID().toString(), it) }
+        val users = network.getUser().map { User(UUID.randomUUID().toString(), it.name) }
         local.deleteAll()
-//        local.insertAll(*users.toTypedArray())
-        local.insertAll(User("uid1", "name1"))
+        local.insertAll(*users.toTypedArray())
         return local.getAll()
     }
 
     @WorkerThread
     override suspend fun addUser(name: String) {
         AppLog.info(TAG, "addUser")
-//        network.postUser()
+        network.postUser()
         return local.insertAll(User(UUID.randomUUID().toString(), name))
     }
 

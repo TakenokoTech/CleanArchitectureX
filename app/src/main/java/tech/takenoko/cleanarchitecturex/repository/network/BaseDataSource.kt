@@ -2,12 +2,18 @@ package tech.takenoko.cleanarchitecturex.repository.network
 
 import android.content.Context
 import androidx.annotation.WorkerThread
+import com.github.kittinunf.fuel.core.FuelError
+import com.github.kittinunf.fuel.core.Request
+import com.github.kittinunf.fuel.core.Response
 import com.github.kittinunf.fuel.coroutines.awaitResponseResult
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.fuel.moshi.moshiDeserializerOf
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.github.kittinunf.result.Result
+import tech.takenoko.cleanarchitecturex.extention.OBJECT_MAPPER
+import tech.takenoko.cleanarchitecturex.extention.planeAdapter
+import tech.takenoko.cleanarchitecturex.model.ApiParameter.*
+import tech.takenoko.cleanarchitecturex.model.ApiResult
 import tech.takenoko.cleanarchitecturex.utils.AppLog
 
 /**
@@ -16,40 +22,42 @@ import tech.takenoko.cleanarchitecturex.utils.AppLog
 abstract class BaseDataSource(private val context: Context) {
 
     @WorkerThread
-    protected suspend inline fun <reified T : Any> awaitGet(url: String, parameters: Map<String, Any> = mapOf(), header: Map<String, Any> = mapOf()): T {
-        AppLog.info(TAG, "GET ====> $url")
-
-        val (request, response, result) = url
-            .httpGet(parameters.map { it.key to it.value })
-            .header(header)
-            .awaitResponseResult(moshiDeserializerOf(T::class.java))
-
-        AppLog.debug(TAG, "request: $request")
-        AppLog.debug(TAG, "response: $response")
-
-        return result.component1() ?: throw result.component2() ?: throw Error()
+    protected suspend inline fun <reified T : Any> awaitGet( param: GetParameter<T>): ApiResult<T> {
+        AppLog.info(TAG, "GET ====> $param.url")
+        val (request, response, result) = param.url
+            .httpGet(param.parameters.map { it.key to it.value })
+            .header(param.header)
+            .awaitResponseResult(moshiDeserializerOf(param.adapter?: planeAdapter()))
+        return createApiResult(request, response, result)
     }
 
     @WorkerThread
-    protected suspend inline fun <reified T : Any> awaitPost(url: String, parameters: Map<String, Any> = mapOf(), header: Map<String, Any> = mapOf(), body: Any? = null): T {
-        AppLog.info(TAG, "GET ====> $url")
-
-        val bodyStr = if(body != null) moshi.adapter(Any::class.java).toJson(body) else ""
-
-        val (request, response, result) = url
-            .httpPost(parameters.map { it.key to it.value })
-            .header(header)
+    protected suspend inline fun <reified T : Any> awaitPost( param: PostParameter<T>): ApiResult<T> {
+        AppLog.info(TAG, "POST ====> $param.url")
+        val bodyStr = if (param.body != null) OBJECT_MAPPER.adapter(Any::class.java).toJson(param.body) else ""
+        val (request, response, result) = param.url
+            .httpPost(param.parameters.map { it.key to it.value })
+            .header(param.header)
             .body(bodyStr)
-            .awaitResponseResult(moshiDeserializerOf(T::class.java))
+            .awaitResponseResult(moshiDeserializerOf(param.adapter ?: planeAdapter()))
+        return createApiResult(request, response, result)
+    }
 
-        AppLog.debug(TAG, "request: $request")
-        AppLog.debug(TAG, "response: $response")
-
-        return result.component1() ?: throw result.component2() ?: throw Error()
+    protected inline fun <reified T : Any> createApiResult(request: Request, response: Response, result: Result<T, FuelError>): ApiResult<T> {
+        // AppLog.debug(TAG, "request: $request")
+        // AppLog.debug(TAG, "response: $response")
+        val responseBody = result.component1()
+        val error = result.component2()
+        return if(responseBody != null) {
+            AppLog.debug(TAG, "responseBody: $responseBody")
+            ApiResult.Success(responseBody)
+        } else {
+            AppLog.debug(TAG, "error: ${error?.localizedMessage}")
+            ApiResult.Failed(error ?: IllegalArgumentException(), response.statusCode)
+        }
     }
 
     companion object {
         val TAG = BaseDataSource::class.java.simpleName
-        val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
     }
 }

@@ -1,4 +1,4 @@
-package tech.takenoko.cleanarchitecturex.repository.dao
+package tech.takenoko.cleanarchitecturex.repository.local
 
 import android.content.Context
 import androidx.room.Database
