@@ -6,7 +6,7 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 import tech.takenoko.cleanarchitecturex.repository.local.User
 import tech.takenoko.cleanarchitecturex.repository.local.UserLocalDataSource
-import tech.takenoko.cleanarchitecturex.repository.network.UserRemoteDataSource
+import tech.takenoko.cleanarchitecturex.repository.remote.UserRemoteDataSource
 import tech.takenoko.cleanarchitecturex.utils.AppLog
 import java.util.*
 

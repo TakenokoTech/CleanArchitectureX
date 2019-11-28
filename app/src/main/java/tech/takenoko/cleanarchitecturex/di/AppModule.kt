@@ -7,7 +7,7 @@ import org.koin.dsl.module
 import tech.takenoko.cleanarchitecturex.repository.UserRepository
 import tech.takenoko.cleanarchitecturex.repository.UserRepositoryImpl
 import tech.takenoko.cleanarchitecturex.repository.local.UserLocalDataSource
-import tech.takenoko.cleanarchitecturex.repository.network.UserRemoteDataSource
+import tech.takenoko.cleanarchitecturex.repository.remote.UserRemoteDataSource
 import tech.takenoko.cleanarchitecturex.usecase.LoadUserUsecase
 import tech.takenoko.cleanarchitecturex.viewmodel.TopViewModel
 

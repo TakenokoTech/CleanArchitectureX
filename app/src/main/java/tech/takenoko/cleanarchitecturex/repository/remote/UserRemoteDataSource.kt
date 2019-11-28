@@ -1,4 +1,4 @@
-package tech.takenoko.cleanarchitecturex.repository.network
+package tech.takenoko.cleanarchitecturex.repository.remote
 
 import android.content.Context
 import androidx.annotation.WorkerThread
