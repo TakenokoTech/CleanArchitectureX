@@ -1,7 +1,7 @@
 package tech.takenoko.cleanarchitecturex.repository.local
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.* // ktlint-disable no-wildcard-imports
 
 @Entity
 data class User(

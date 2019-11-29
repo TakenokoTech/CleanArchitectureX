@@ -1,15 +1,15 @@
 package tech.takenoko.cleanarchitecturex.repository
 
 import androidx.annotation.WorkerThread
+import java.util.UUID
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import tech.takenoko.cleanarchitecturex.repository.local.User
 import tech.takenoko.cleanarchitecturex.repository.local.UserLocalDataSource
 import tech.takenoko.cleanarchitecturex.repository.remote.UserRemoteDataSource
 import tech.takenoko.cleanarchitecturex.utils.AppLog
-import java.util.*
 
-class UserRepositoryImpl: UserRepository, KoinComponent {
+class UserRepositoryImpl : UserRepository, KoinComponent {
 
     private val local: UserLocalDataSource by inject()
     private val network: UserRemoteDataSource by inject()

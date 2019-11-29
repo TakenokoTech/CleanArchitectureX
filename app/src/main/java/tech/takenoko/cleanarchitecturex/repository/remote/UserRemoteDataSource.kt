@@ -3,13 +3,14 @@ package tech.takenoko.cleanarchitecturex.repository.remote
 import android.content.Context
 import androidx.annotation.WorkerThread
 import tech.takenoko.cleanarchitecturex.extention.listAdapter
-import tech.takenoko.cleanarchitecturex.model.ApiParameter.*
 import tech.takenoko.cleanarchitecturex.model.ApiResult
+import tech.takenoko.cleanarchitecturex.model.GetParameter
 import tech.takenoko.cleanarchitecturex.model.HttpStatusCode
+import tech.takenoko.cleanarchitecturex.model.PostParameter
 import tech.takenoko.cleanarchitecturex.model.response.ResultEntity
 import tech.takenoko.cleanarchitecturex.model.response.UserEntity
 
-class UserRemoteDataSource(context: Context): BaseDataSource(context) {
+class UserRemoteDataSource(context: Context) : BaseDataSource(context) {
 
     private val getUserUrl = "https://us-central1-takenokotechapi.cloudfunctions.net/getUser"
     private val addUserUrl = "https://us-central1-takenokotechapi.cloudfunctions.net/addUser"
@@ -19,12 +20,11 @@ class UserRemoteDataSource(context: Context): BaseDataSource(context) {
     suspend fun getUser(): List<UserEntity> {
         val param = GetParameter<List<UserEntity>>(url = getUserUrl, adapter = listAdapter())
         fetch(param).let {
-            return when(it) {
+            return when (it) {
                 is ApiResult.Success -> it.value
                 is ApiResult.Failed -> throw it.cause
             }
         }
-
     }
 
     @WorkerThread

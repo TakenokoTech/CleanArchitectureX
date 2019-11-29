@@ -5,7 +5,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
-val OBJECT_MAPPER : Moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+val OBJECT_MAPPER: Moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 
 /**
  * moshi list adapter

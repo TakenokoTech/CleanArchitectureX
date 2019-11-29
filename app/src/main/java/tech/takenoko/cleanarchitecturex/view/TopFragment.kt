@@ -15,7 +15,6 @@ import tech.takenoko.cleanarchitecturex.databinding.FragmentTopBinding
 import tech.takenoko.cleanarchitecturex.utils.AppLog
 import tech.takenoko.cleanarchitecturex.viewmodel.TopViewModel
 
-
 class TopFragment : Fragment() {
 
     private val viewModel: TopViewModel by inject()

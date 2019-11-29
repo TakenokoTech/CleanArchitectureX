@@ -29,7 +29,7 @@ class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerViewAdapter.BindingHold
         }.dispatchUpdatesTo(this)
     }
 
-    class BindingHolder(var binding: RecyclerItemBinding): RecyclerView.ViewHolder(binding.root)
+    class BindingHolder(var binding: RecyclerItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     class Callback(private val old: List<String>, private val new: List<String>) : DiffUtil.Callback() {
         override fun getOldListSize(): Int = old.size

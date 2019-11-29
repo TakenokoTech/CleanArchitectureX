@@ -28,7 +28,7 @@ abstract class BaseDataSource(private val context: Context) {
             .body(bodyStr)
             .awaitResponseResult(moshiDeserializerOf(param.adapter ?: planeAdapter()))
 
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             AppLog.debug(TAG, "request: $request")
             AppLog.debug(TAG, "response: $response")
         }

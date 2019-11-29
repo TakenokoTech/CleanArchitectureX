@@ -1,10 +1,12 @@
 package tech.takenoko.cleanarchitecturex.model
 
-import com.github.kittinunf.fuel.core.Parameters
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.squareup.moshi.JsonAdapter
+
+typealias GetParameter<T> = ApiParameter._GetParameter<T>
+typealias PostParameter<T> = ApiParameter._PostParameter<T>
 
 sealed class ApiParameter<T : Any>(
     open val url: String,
@@ -16,7 +18,7 @@ sealed class ApiParameter<T : Any>(
     open val method: String = ""
     abstract fun call(): Request
 
-    class GetParameter<T : Any>(
+    class _GetParameter<T : Any>(
         override val url: String,
         override val parameters: Map<String, Any> = mapOf(),
         override val header: Map<String, Any> = mapOf(),
@@ -26,7 +28,7 @@ sealed class ApiParameter<T : Any>(
         override fun call() = url.httpGet(parameters.map { it.key to it.value })
     }
 
-    class PostParameter<T : Any>(
+    class _PostParameter<T : Any>(
         override val url: String,
         override val parameters: Map<String, Any> = mapOf(),
         override val header: Map<String, Any> = mapOf(),

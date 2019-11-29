@@ -3,11 +3,11 @@ package tech.takenoko.cleanarchitecturex
 import android.app.Application
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import tech.takenoko.cleanarchitecturex.di.*
+import tech.takenoko.cleanarchitecturex.di.diModules
 
-class App: Application() {
+class App : Application() {
 
-    override fun onCreate(){
+    override fun onCreate() {
         super.onCreate()
 
         startKoin {

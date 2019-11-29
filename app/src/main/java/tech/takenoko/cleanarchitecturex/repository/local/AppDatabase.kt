@@ -12,7 +12,7 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         @Volatile private var instance: AppDatabase? = null
         fun getDatabase(context: Context): AppDatabase = synchronized(this) {
-            instance = if(instance == null) Room.databaseBuilder(context, AppDatabase::class.java, "CleanArchitectureX-DB").build() else instance
+            instance = if (instance == null) Room.databaseBuilder(context, AppDatabase::class.java, "CleanArchitectureX-DB").build() else instance
             return instance!!
         }
     }
