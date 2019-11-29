@@ -1,6 +1,5 @@
 package tech.takenoko.cleanarchitecturex.repository
 
-import android.content.Context
 import androidx.annotation.WorkerThread
 import org.koin.core.KoinComponent
 import org.koin.core.inject
@@ -10,9 +9,8 @@ import tech.takenoko.cleanarchitecturex.repository.remote.UserRemoteDataSource
 import tech.takenoko.cleanarchitecturex.utils.AppLog
 import java.util.*
 
-class UserRepositoryImpl(context: Context): UserRepository, KoinComponent {
+class UserRepositoryImpl: UserRepository, KoinComponent {
 
-    // private val database by lazy { FirebaseDatabase.getInstance().reference }
     private val local: UserLocalDataSource by inject()
     private val network: UserRemoteDataSource by inject()
 

@@ -18,7 +18,7 @@ class UserRemoteDataSource(context: Context): BaseDataSource(context) {
     @WorkerThread
     suspend fun getUser(): List<UserEntity> {
         val param = GetParameter<List<UserEntity>>(url = getUserUrl, adapter = listAdapter())
-        awaitGet(param).let {
+        fetch(param).let {
             return when(it) {
                 is ApiResult.Success -> it.value
                 is ApiResult.Failed -> throw it.cause
@@ -30,7 +30,7 @@ class UserRemoteDataSource(context: Context): BaseDataSource(context) {
     @WorkerThread
     suspend fun postUser(): ResultEntity {
         val param = PostParameter<ResultEntity>(url = addUserUrl, body = UserEntity("user1"))
-        awaitPost(param).let {
+        fetch(param).let {
             return when (it) {
                 is ApiResult.Success -> it.value
                 is ApiResult.Failed -> throw it.cause
@@ -41,7 +41,7 @@ class UserRemoteDataSource(context: Context): BaseDataSource(context) {
     @WorkerThread
     suspend fun postFailed(): ResultEntity {
         val param = PostParameter<ResultEntity>(url = addUserUrl)
-        awaitPost(param).let {
+        fetch(param).let {
             return when (it) {
                 is ApiResult.Success -> it.value
                 is ApiResult.Failed -> when (it.statusCode) {

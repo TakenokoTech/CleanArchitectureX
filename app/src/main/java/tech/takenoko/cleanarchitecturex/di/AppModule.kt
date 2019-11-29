@@ -23,7 +23,7 @@ private val usecaseModules = module {
 }
 
 private val repositoryModules = module {
-    factory { UserRepositoryImpl(androidContext() as Application) as UserRepository }
+    factory { UserRepositoryImpl() as UserRepository }
 }
 
 private val localModules = module {
