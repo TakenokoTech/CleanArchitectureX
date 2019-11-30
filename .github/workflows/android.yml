@@ -15,6 +15,13 @@ jobs:
       run: chmod +x ./gradlew && ./gradlew check
     - name: Test with Gradle
       run: chmod +x ./gradlew && ./gradlew test
+    - name: Coverage with Gradle
+      run: chmod +x ./gradlew && ./gradlew jacocoTestReport
+    - uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./app/build/reports/jacoco/jacocoTestDebugUnitTestReport/jacocoTestDebugUnitTestReport.xml
+        flags: unittests
 
   Build:
     runs-on: ubuntu-latest
