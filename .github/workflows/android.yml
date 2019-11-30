@@ -22,6 +22,7 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./app/build/reports/jacoco/jacocoTestDebugUnitTestReport/jacocoTestDebugUnitTestReport.xml
         flags: unittests
+        name: codecov-umbrella
 
   Build:
     runs-on: ubuntu-latest
