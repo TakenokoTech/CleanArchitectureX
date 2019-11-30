@@ -26,6 +26,6 @@ class LoadUserUsecase(context: Context, private val scope: CoroutineScope) : Asy
     }
 
     companion object {
-        val TAG = LoadUserUsecase::class.java.simpleName
+        private val TAG = LoadUserUsecase::class.java.simpleName
     }
 }

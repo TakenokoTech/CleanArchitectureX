@@ -42,6 +42,6 @@ class TopViewModel : BaseViewModel() {
     }
 
     companion object {
-        val TAG = TopViewModel::class.java.simpleName
+        private val TAG = TopViewModel::class.java.simpleName
     }
 }

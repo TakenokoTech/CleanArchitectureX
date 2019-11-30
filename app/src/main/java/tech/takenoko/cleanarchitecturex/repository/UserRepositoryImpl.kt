@@ -40,6 +40,6 @@ class UserRepositoryImpl : UserRepository, KoinComponent {
     }
 
     companion object {
-        val TAG = UserRepositoryImpl::class.java.simpleName
+        private val TAG = UserRepositoryImpl::class.java.simpleName
     }
 }

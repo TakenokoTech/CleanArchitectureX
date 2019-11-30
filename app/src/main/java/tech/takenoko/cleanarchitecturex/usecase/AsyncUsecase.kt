@@ -36,6 +36,6 @@ abstract class AsyncUsecase<Q : Any, P : Any>(private val context: Context, priv
     protected abstract suspend fun callAsync(param: Q): Deferred<P>
 
     companion object {
-        val TAG = AsyncUsecase::class.java.simpleName
+        private val TAG = AsyncUsecase::class.java.simpleName
     }
 }

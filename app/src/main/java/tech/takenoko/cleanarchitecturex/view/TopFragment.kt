@@ -50,6 +50,6 @@ class TopFragment : Fragment() {
     }
 
     companion object {
-        val TAG = TopFragment::class.java.simpleName
+        private val TAG = TopFragment::class.java.simpleName
     }
 }
