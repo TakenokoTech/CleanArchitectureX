@@ -1,4 +1,4 @@
-package tech.takenoko.cleanarchitecturex.model
+package tech.takenoko.cleanarchitecturex.entities
 
 enum class HttpStatusCode(val code: Int) {
     DEFAULT(0),

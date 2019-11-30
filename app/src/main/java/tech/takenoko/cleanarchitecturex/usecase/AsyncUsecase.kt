@@ -9,7 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
-import tech.takenoko.cleanarchitecturex.model.UsecaseResult
+import tech.takenoko.cleanarchitecturex.entities.UsecaseResult
 import tech.takenoko.cleanarchitecturex.utils.AppLog
 
 abstract class AsyncUsecase<Q : Any, P : Any>(private val context: Context, private val scope: CoroutineScope) : KoinComponent {

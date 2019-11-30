@@ -5,7 +5,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
 import org.koin.core.inject
 import org.koin.core.parameter.parametersOf
-import tech.takenoko.cleanarchitecturex.model.UsecaseResult
+import tech.takenoko.cleanarchitecturex.entities.UsecaseResult
 import tech.takenoko.cleanarchitecturex.usecase.LoadUserUsecase
 import tech.takenoko.cleanarchitecturex.utils.AppLog
 

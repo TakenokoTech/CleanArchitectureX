@@ -2,13 +2,13 @@ package tech.takenoko.cleanarchitecturex.repository.remote
 
 import android.content.Context
 import androidx.annotation.WorkerThread
+import tech.takenoko.cleanarchitecturex.entities.ApiResult
+import tech.takenoko.cleanarchitecturex.entities.Get
+import tech.takenoko.cleanarchitecturex.entities.HttpStatusCode
+import tech.takenoko.cleanarchitecturex.entities.Post
+import tech.takenoko.cleanarchitecturex.entities.response.ResultEntity
+import tech.takenoko.cleanarchitecturex.entities.response.UserEntity
 import tech.takenoko.cleanarchitecturex.extention.listAdapter
-import tech.takenoko.cleanarchitecturex.model.ApiResult
-import tech.takenoko.cleanarchitecturex.model.GetParameter
-import tech.takenoko.cleanarchitecturex.model.HttpStatusCode
-import tech.takenoko.cleanarchitecturex.model.PostParameter
-import tech.takenoko.cleanarchitecturex.model.response.ResultEntity
-import tech.takenoko.cleanarchitecturex.model.response.UserEntity
 
 class UserRemoteDataSource(context: Context) : BaseDataSource(context) {
 
@@ -18,7 +18,11 @@ class UserRemoteDataSource(context: Context) : BaseDataSource(context) {
 
     @WorkerThread
     suspend fun getUser(): List<UserEntity> {
-        val param = GetParameter<List<UserEntity>>(url = getUserUrl, adapter = listAdapter())
+        val param =
+            Get<List<UserEntity>>(
+                url = getUserUrl,
+                adapter = listAdapter()
+            )
         fetch(param).let {
             return when (it) {
                 is ApiResult.Success -> it.value
@@ -29,7 +33,10 @@ class UserRemoteDataSource(context: Context) : BaseDataSource(context) {
 
     @WorkerThread
     suspend fun postUser(): ResultEntity {
-        val param = PostParameter<ResultEntity>(url = addUserUrl, body = UserEntity("user1"))
+        val param = Post<ResultEntity>(
+            url = addUserUrl,
+            body = UserEntity("user1")
+        )
         fetch(param).let {
             return when (it) {
                 is ApiResult.Success -> it.value
@@ -40,7 +47,8 @@ class UserRemoteDataSource(context: Context) : BaseDataSource(context) {
 
     @WorkerThread
     suspend fun postFailed(): ResultEntity {
-        val param = PostParameter<ResultEntity>(url = addUserUrl)
+        val param =
+            Post<ResultEntity>(url = addUserUrl)
         fetch(param).let {
             return when (it) {
                 is ApiResult.Success -> it.value

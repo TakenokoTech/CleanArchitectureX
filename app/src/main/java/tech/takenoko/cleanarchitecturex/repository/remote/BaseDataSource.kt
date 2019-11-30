@@ -5,10 +5,10 @@ import androidx.annotation.WorkerThread
 import com.github.kittinunf.fuel.coroutines.awaitResponseResult
 import com.github.kittinunf.fuel.moshi.moshiDeserializerOf
 import tech.takenoko.cleanarchitecturex.BuildConfig
+import tech.takenoko.cleanarchitecturex.entities.ApiParameter
+import tech.takenoko.cleanarchitecturex.entities.ApiResult
 import tech.takenoko.cleanarchitecturex.extention.OBJECT_MAPPER
 import tech.takenoko.cleanarchitecturex.extention.planeAdapter
-import tech.takenoko.cleanarchitecturex.model.ApiParameter
-import tech.takenoko.cleanarchitecturex.model.ApiResult
 import tech.takenoko.cleanarchitecturex.utils.AppLog
 
 /**

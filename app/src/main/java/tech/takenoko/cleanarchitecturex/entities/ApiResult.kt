@@ -1,4 +1,4 @@
-package tech.takenoko.cleanarchitecturex.model
+package tech.takenoko.cleanarchitecturex.entities
 
 /**
  * APIの状態
