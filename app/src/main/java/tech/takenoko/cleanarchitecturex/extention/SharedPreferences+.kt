@@ -51,25 +51,7 @@ fun SharedPreferences.string(
 ): ReadWriteProperty<Any, String> =
     delegate(defaultValue, key, SharedPreferences::getString, SharedPreferences.Editor::putString)
 
-/**
- * Enum Read Write Delegate
- */
-fun <T : Enum<T>> SharedPreferences.enum(
-    valueOf: (String) -> T,
-    defaultValue: Lazy<T>,
-    key: String? = null
-) =
-    object : ReadWriteProperty<Any, T> {
-        override fun getValue(thisRef: Any, property: KProperty<*>): T {
-            return getString(key ?: property.name, null)?.let { valueOf(it) } ?: defaultValue.value
-        }
-
-        override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {
-            edit().putString(key ?: property.name, value.name).apply()
-        }
-    }
-
-/**
+/*
  * Moshi Json String Read Write Delegate
  */
 inline fun <reified T : Any> SharedPreferences.json(

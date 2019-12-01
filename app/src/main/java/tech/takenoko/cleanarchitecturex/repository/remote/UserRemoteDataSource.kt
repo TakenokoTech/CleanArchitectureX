@@ -1,7 +1,10 @@
 package tech.takenoko.cleanarchitecturex.repository.remote
 
-import android.content.Context
 import androidx.annotation.WorkerThread
+import org.koin.core.KoinComponent
+import org.koin.core.inject
+import tech.takenoko.cleanarchitecturex.di.AppRestApi
+import tech.takenoko.cleanarchitecturex.di.fetch
 import tech.takenoko.cleanarchitecturex.entities.ApiResult
 import tech.takenoko.cleanarchitecturex.entities.Get
 import tech.takenoko.cleanarchitecturex.entities.HttpStatusCode
@@ -10,11 +13,9 @@ import tech.takenoko.cleanarchitecturex.entities.response.ResultEntity
 import tech.takenoko.cleanarchitecturex.entities.response.UserEntity
 import tech.takenoko.cleanarchitecturex.extention.listAdapter
 
-class UserRemoteDataSource(context: Context) : BaseDataSource(context) {
+class UserRemoteDataSource : KoinComponent {
 
-    private val getUserUrl = "https://us-central1-takenokotechapi.cloudfunctions.net/getUser"
-    private val addUserUrl = "https://us-central1-takenokotechapi.cloudfunctions.net/addUser"
-    private val failedUrl = "https://us-central1-takenokotechapi.cloudfunctions.net/failed"
+    private val restApi: AppRestApi by inject()
 
     @WorkerThread
     suspend fun getUser(): List<UserEntity> {
@@ -22,7 +23,7 @@ class UserRemoteDataSource(context: Context) : BaseDataSource(context) {
             url = getUserUrl,
             adapter = listAdapter()
         )
-        fetch(param).let {
+        restApi.fetch(param).let {
             return when (it) {
                 is ApiResult.Success -> it.value
                 is ApiResult.Failed -> throw it.cause
@@ -36,7 +37,7 @@ class UserRemoteDataSource(context: Context) : BaseDataSource(context) {
             url = addUserUrl,
             body = UserEntity("user1")
         )
-        fetch(param).let {
+        restApi.fetch(param).let {
             return when (it) {
                 is ApiResult.Success -> it.value
                 is ApiResult.Failed -> throw it.cause
@@ -49,7 +50,7 @@ class UserRemoteDataSource(context: Context) : BaseDataSource(context) {
         val param = Post<ResultEntity>(
             url = addUserUrl
         )
-        fetch(param).let {
+        restApi.fetch(param).let {
             return when (it) {
                 is ApiResult.Success -> it.value
                 is ApiResult.Failed -> when (it.statusCode) {
@@ -58,5 +59,11 @@ class UserRemoteDataSource(context: Context) : BaseDataSource(context) {
                 }
             }
         }
+    }
+
+    companion object {
+        const val getUserUrl = "https://us-central1-takenokotechapi.cloudfunctions.net/getUser"
+        const val addUserUrl = "https://us-central1-takenokotechapi.cloudfunctions.net/addUser"
+        const val failedUrl = "https://us-central1-takenokotechapi.cloudfunctions.net/failed"
     }
 }

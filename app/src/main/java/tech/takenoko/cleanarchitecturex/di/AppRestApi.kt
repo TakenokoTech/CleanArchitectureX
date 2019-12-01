@@ -1,9 +1,8 @@
-package tech.takenoko.cleanarchitecturex.repository.remote
+package tech.takenoko.cleanarchitecturex.di
 
-import android.content.Context
 import androidx.annotation.WorkerThread
 import com.github.kittinunf.fuel.coroutines.awaitResponseResult
-import com.github.kittinunf.fuel.moshi.moshiDeserializerOf
+import kotlin.reflect.KClass
 import tech.takenoko.cleanarchitecturex.BuildConfig
 import tech.takenoko.cleanarchitecturex.entities.ApiParameter
 import tech.takenoko.cleanarchitecturex.entities.ApiResult
@@ -14,19 +13,29 @@ import tech.takenoko.cleanarchitecturex.utils.AppLog
 /**
  * Usage: https://github.com/kittinunf/fuel/tree/master/fuel-coroutines
  */
-abstract class BaseDataSource(private val context: Context) {
+interface AppRestApi {
+    suspend fun <T : Any> execute(param: ApiParameter<T>, clazz: KClass<T>): ApiResult<T>
+}
+suspend inline fun <reified T : Any> AppRestApi.fetch(param: ApiParameter<T>) = execute(param, T::class)
+
+@Suppress("OVERRIDE_BY_INLINE")
+class AppRestApiImpl : AppRestApi {
 
     @WorkerThread
-    protected suspend inline fun <reified T : Any> fetch(param: ApiParameter<T>): ApiResult<T> {
+    override suspend inline fun <T : Any> execute(param: ApiParameter<T>, clazz: KClass<T>): ApiResult<T> {
         AppLog.info(TAG, "${param.method} ====> $param.url")
 
         val bodyStr =
             if (param.body != null) OBJECT_MAPPER.adapter(Any::class.java).toJson(param.body) else ""
 
-        val (request, response, result) = param.call()
-            .header(param.header)
-            .body(bodyStr)
-            .awaitResponseResult(moshiDeserializerOf(param.adapter ?: planeAdapter()))
+        val requestBuilder = param.call().header(param.header).body(bodyStr)
+
+        val (request, response, result) = if (param.adapter != null) {
+            val adapter = param.adapter ?: return ApiResult.Failed(Exception(), 0)
+            requestBuilder.awaitResponseResult(adapter)
+        } else {
+            requestBuilder.awaitResponseResult(planeAdapter(clazz.java))
+        }
 
         if (BuildConfig.DEBUG) {
             AppLog.debug(TAG, "request: $request")
@@ -46,6 +55,6 @@ abstract class BaseDataSource(private val context: Context) {
     }
 
     companion object {
-        val TAG = BaseDataSource::class.java.simpleName
+        val TAG = AppRestApiImpl::class.java.simpleName
     }
 }

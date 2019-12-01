@@ -42,7 +42,6 @@ class LoadUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
         loadUserUsecase.source.observeForever(mockObserver)
         loadUserUsecase.execute(Unit)
         checkedObserver(mockObserver) {
-            val result = it as? UsecaseResult.Resolved
             Assert.assertTrue(it is UsecaseResult.Pending)
         }
         Thread.sleep(1500)

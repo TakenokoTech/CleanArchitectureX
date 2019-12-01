@@ -7,15 +7,19 @@ import androidx.room.RoomDatabase
 import tech.takenoko.cleanarchitecturex.entities.room.UserDao
 import tech.takenoko.cleanarchitecturex.repository.local.UserLocalDataSource
 
-@Database(entities = [UserLocalDataSource.User::class], version = 1)
-abstract class AppDatabase : RoomDatabase() {
-    abstract fun userDao(): UserDao
+interface AppDatabase {
+    fun userDao(): UserDao
 
     companion object {
-        @Volatile private var instance: AppDatabase? = null
+        @Volatile private var instance: AppDatabaseImpl? = null
         fun getDatabase(context: Context): AppDatabase = synchronized(this) {
-            instance = if (instance == null) Room.databaseBuilder(context, AppDatabase::class.java, "CleanArchitectureX-DB").build() else instance
+            instance = if (instance == null) Room.databaseBuilder(context, AppDatabaseImpl::class.java, "CleanArchitectureX-DB").build() else instance
             return instance!!
         }
     }
+}
+
+@Database(entities = [UserLocalDataSource.User::class], version = 1)
+abstract class AppDatabaseImpl : RoomDatabase(), AppDatabase {
+    abstract override fun userDao(): UserDao
 }
