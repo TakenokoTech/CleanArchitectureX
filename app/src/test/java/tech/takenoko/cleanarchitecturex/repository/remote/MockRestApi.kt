@@ -5,6 +5,7 @@ import tech.takenoko.cleanarchitecturex.di.AppRestApi
 import tech.takenoko.cleanarchitecturex.entities.ApiParameter
 import tech.takenoko.cleanarchitecturex.entities.ApiResult
 
+@Suppress("UNCHECKED_CAST")
 class MockRestApi : AppRestApi {
 
     override suspend fun <T : Any> execute(param: ApiParameter<T>, clazz: KClass<T>): ApiResult<T> {

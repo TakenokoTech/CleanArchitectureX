@@ -139,3 +139,7 @@ task ktlintFormat(type: JavaExec, group: "formatting") {
     classpath = configurations.ktlint
     args "-F", "src/**/*.kt"
 }
+
+jacocoAndroidUnitTestReport {
+    excludes += ['**/di/**', '**/databinding/**']
+}

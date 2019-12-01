@@ -9,7 +9,6 @@ import org.junit.Test
 class SharedPreferencesTest {
 
     private val preferences: SharedPreferences = MockSharedPreferences()
-    enum class NumberEnum(v: String) { ONE("1"), TWO("2") }
 
     var booleanPref: Boolean by preferences.boolean()
     var floatPref: Float by preferences.float()
