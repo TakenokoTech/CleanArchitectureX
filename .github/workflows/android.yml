@@ -53,7 +53,7 @@ jobs:
         with:
           java-version: 1.8
       - name: Run ktlintCheck
-        run: chmod +x ./gradlew && ./gradlew ktlintCheck
+        run: chmod +x ./gradlew && ./gradlew ktlint
       - name: Run danger
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
