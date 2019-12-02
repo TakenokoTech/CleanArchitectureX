@@ -14,7 +14,7 @@ import tech.takenoko.cleanarchitecturex.utils.AppLog
 
 abstract class AsyncUsecase<Q : Any, P : Any>(private val context: Context, private val scope: CoroutineScope) : KoinComponent {
 
-    private var result = MediatorLiveData<UsecaseResult<P>>()
+    protected var result = MediatorLiveData<UsecaseResult<P>>()
     val source: LiveData<UsecaseResult<P>> = result
 
     @MainThread

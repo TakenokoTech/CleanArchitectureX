@@ -152,5 +152,38 @@ task ktlintFormat(type: JavaExec, group: "formatting") {
 }
 
 jacocoAndroidUnitTestReport {
-    excludes += ['**/di/**', '**/databinding/**']
+    excludes += [
+        '**/di/**',
+        '**/entities/room/**',
+        '**/App.*',
+        '**/App$*',
+        '**/AppLog.*',
+        //
+        '**/R.class',
+        '**/R$*.class',
+        '**/BR.*',
+        '**/*Binding.*',
+        '**/*BindingImpl.*',
+        '**/DataBindingInfo.class',
+        '**/DataBinderMapperImpl.class',
+        '**/DataBinderMapperImpl$*.class',
+        '**/databinding/*',
+        '**/*$ViewInjector*.*',
+        '**/*$ViewBinder*.*',
+        '**/databinding/**/*.*',
+        '**/android/databinding/*Binding.*',
+        '**/BuildConfig.*',
+        '**/Manifest*.*',
+        '**/*_MembersInjector.*',
+        '**/Dagger*Component.*',
+        '**/Dagger*Component$Builder.*',
+        '**/*Module_*Factory.*',
+        '**/*Fragment*.*',
+        '**/*Activity*.*',
+        '**/*Service*.*',
+        '**/*Adapter*.*',
+        '**/*ViewPager*.*',
+        '**/*ViewHolder*.*',
+        '**/*Module*.*'
+    ]
 }

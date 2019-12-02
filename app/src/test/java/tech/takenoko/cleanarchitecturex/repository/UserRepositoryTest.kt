@@ -53,7 +53,7 @@ class UserRepositoryTest : AutoCloseKoinTest(), LifecycleOwner {
     fun getAllUser_success1() = runBlocking {
         // mock api
         val getUserUrlParam = Get<List<UserEntity>>(url = getUserUrl)
-        val getUserUrlResponse = ApiResult.Success<List<UserEntity>>(listOf())
+        val getUserUrlResponse = ApiResult.Success(listOf(UserEntity("testName")))
         MockRestApi.response[getUserUrlParam] = getUserUrlResponse
         // mock db
         getAll = listOf(UserLocalDataSource.User("testName", "testName"))

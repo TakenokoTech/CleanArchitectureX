@@ -25,7 +25,9 @@ import tech.takenoko.cleanarchitecturex.utils.AppLog
 
 @ExperimentalCoroutinesApi
 class LoadUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
-    @get:Rule val rule: TestRule = InstantTaskExecutorRule()
+
+    @get:Rule
+    val rule: TestRule = InstantTaskExecutorRule()
 
     private val mockObserver = mockObserver<UsecaseResult<List<String>>>()
 
