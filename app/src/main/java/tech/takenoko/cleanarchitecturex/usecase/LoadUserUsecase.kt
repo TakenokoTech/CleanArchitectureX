@@ -11,7 +11,7 @@ import org.koin.core.inject
 import tech.takenoko.cleanarchitecturex.repository.UserRepository
 import tech.takenoko.cleanarchitecturex.utils.AppLog
 
-class LoadUserUsecase(context: Context, private val scope: CoroutineScope) : AsyncUsecase<Unit, List<String>>(context, scope) {
+open class LoadUserUsecase(context: Context, private val scope: CoroutineScope) : AsyncUsecase<Unit, List<String>>(context, scope) {
 
     private val userRepository: UserRepository by inject()
 

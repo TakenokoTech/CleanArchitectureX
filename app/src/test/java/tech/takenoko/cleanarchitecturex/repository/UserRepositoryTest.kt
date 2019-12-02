@@ -6,12 +6,10 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import org.junit.rules.TestRule
 import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
 import org.koin.core.inject
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -33,7 +31,7 @@ import tech.takenoko.cleanarchitecturex.repository.remote.UserRemoteDataSource.C
 import tech.takenoko.cleanarchitecturex.repository.remote.UserRemoteDataSource.Companion.getUserUrl
 
 @ExperimentalCoroutinesApi
-class LoadUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
+class UserRepositoryTest : AutoCloseKoinTest(), LifecycleOwner {
     @get:Rule
     val rule: TestRule = InstantTaskExecutorRule()
 
@@ -44,6 +42,11 @@ class LoadUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
         startKoin { modules(mockModule) }
         MockRestApi.response = mutableMapOf()
         MockDatabase.userDao = userDao
+    }
+
+    @After
+    fun tearDown() {
+        stopKoin()
     }
 
     @Test

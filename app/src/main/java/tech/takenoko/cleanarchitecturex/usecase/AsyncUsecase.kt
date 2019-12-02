@@ -18,7 +18,7 @@ abstract class AsyncUsecase<Q : Any, P : Any>(private val context: Context, priv
     val source: LiveData<UsecaseResult<P>> = result
 
     @MainThread
-    fun execute(param: Q) {
+    open fun execute(param: Q) {
         result.postValue(UsecaseResult.Pending())
         scope.launch {
             runCatching {

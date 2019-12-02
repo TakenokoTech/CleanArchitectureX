@@ -7,12 +7,10 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ServiceLifecycleDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScope
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import org.junit.rules.TestRule
 import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
 import org.koin.core.inject
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -34,6 +32,11 @@ class LoadUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
     @Before
     fun before() {
         startKoin { modules(mockModule) }
+    }
+
+    @After
+    fun tearDown() {
+        stopKoin()
     }
 
     @Test
