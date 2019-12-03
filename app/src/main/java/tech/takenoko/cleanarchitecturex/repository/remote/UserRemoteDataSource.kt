@@ -7,7 +7,6 @@ import tech.takenoko.cleanarchitecturex.di.AppRestApi
 import tech.takenoko.cleanarchitecturex.di.fetch
 import tech.takenoko.cleanarchitecturex.entities.ApiResult
 import tech.takenoko.cleanarchitecturex.entities.Get
-import tech.takenoko.cleanarchitecturex.entities.HttpStatusCode
 import tech.takenoko.cleanarchitecturex.entities.Post
 import tech.takenoko.cleanarchitecturex.entities.response.ResultEntity
 import tech.takenoko.cleanarchitecturex.entities.response.UserEntity
@@ -23,8 +22,8 @@ class UserRemoteDataSource : KoinComponent {
             url = getUserUrl,
             adapter = listAdapter()
         )
-        restApi.fetch(param).let {
-            return when (it) {
+        return restApi.fetch(param).let {
+            when (it) {
                 is ApiResult.Success -> it.value
                 is ApiResult.Failed -> throw it.cause
             }
@@ -37,8 +36,8 @@ class UserRemoteDataSource : KoinComponent {
             url = addUserUrl,
             body = UserEntity("user1")
         )
-        restApi.fetch(param).let {
-            return when (it) {
+        return restApi.fetch(param).let {
+            when (it) {
                 is ApiResult.Success -> it.value
                 is ApiResult.Failed -> throw it.cause
             }
@@ -48,13 +47,12 @@ class UserRemoteDataSource : KoinComponent {
     @WorkerThread
     suspend fun postFailed(): ResultEntity {
         val param = Post<ResultEntity>(
-            url = addUserUrl
+            url = failedUrl
         )
-        restApi.fetch(param).let {
-            return when (it) {
+        return restApi.fetch(param).let {
+            when (it) {
                 is ApiResult.Success -> it.value
                 is ApiResult.Failed -> when (it.statusCode) {
-                    HttpStatusCode.INTERNAL_SERVER_ERROR.code -> throw it.cause
                     else -> throw it.cause
                 }
             }

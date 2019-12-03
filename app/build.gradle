@@ -47,7 +47,14 @@ android {
         enabled = true
     }
 
-    testOptions.unitTests.includeAndroidResources = true
+    testOptions.unitTests{
+        includeAndroidResources = true
+        all {
+            jacoco {
+                includeNoLocationClasses = true
+            }
+        }
+    }
 }
 
 configurations {
@@ -158,7 +165,6 @@ jacocoAndroidUnitTestReport {
         '**/App.*',
         '**/App$*',
         '**/AppLog.*',
-        //
         '**/R.class',
         '**/R$*.class',
         '**/BR.*',
@@ -178,12 +184,12 @@ jacocoAndroidUnitTestReport {
         '**/Dagger*Component.*',
         '**/Dagger*Component$Builder.*',
         '**/*Module_*Factory.*',
-        '**/*Fragment*.*',
-        '**/*Activity*.*',
-        '**/*Service*.*',
-        '**/*Adapter*.*',
-        '**/*ViewPager*.*',
-        '**/*ViewHolder*.*',
-        '**/*Module*.*'
+        '**/*Module*.*',
+        // '**/*Fragment*.*',
+        // '**/*Activity*.*',
+        // '**/*Service*.*',
+        // '**/*Adapter*.*',
+        // '**/*ViewPager*.*',
+        // '**/*ViewHolder*.*',
     ]
 }
