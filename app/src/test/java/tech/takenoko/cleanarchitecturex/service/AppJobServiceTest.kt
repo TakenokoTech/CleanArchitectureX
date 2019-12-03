@@ -5,7 +5,7 @@ import android.content.Context
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
 import com.nhaarman.mockitokotlin2.mock
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -15,14 +15,16 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import org.koin.test.AutoCloseKoinTest
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import tech.takenoko.cleanarchitecturex.entities.UsecaseResult
 import tech.takenoko.cleanarchitecturex.usecase.BackgroundUsecase
 import tech.takenoko.cleanarchitecturex.viewmodel.TopViewModel
 
 @Config(sdk = [Build.VERSION_CODES.P])
 @RunWith(RobolectricTestRunner::class)
-class AppJobServiceTest {
+class AppJobServiceTest : AutoCloseKoinTest() {
 
     @Before
     fun before() {
@@ -42,6 +44,8 @@ class AppJobServiceTest {
     fun onCreate_success() {
         val appJobService = AppJobService()
         appJobService.onStartJob(mock {})
+        appJobService.observer(mock {}).onChanged(UsecaseResult.Pending())
+        appJobService.observer(mock {}).onChanged(UsecaseResult.Resolved(true))
         appJobService.onStopJob(mock {})
     }
 
@@ -51,8 +55,10 @@ class AppJobServiceTest {
     }
 
     private inner class MockBackgroundUsecase(context: Context, scope: CoroutineScope) : BackgroundUsecase(context, scope) {
-        override fun execute(param: Unit) {}
+        override fun execute(param: Unit) {
+            result.postValue(UsecaseResult.Resolved(true))
+        }
     }
 
-    inner class TestActivity : Activity()
+    class TestActivity : Activity()
 }

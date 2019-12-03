@@ -72,7 +72,7 @@ fun <T : Any> SharedPreferences.json(
 private typealias Getter<T> = SharedPreferences.(key: String, defaultValue: T) -> T?
 private typealias Setter<T> = SharedPreferences.Editor.(key: String, value: T) -> SharedPreferences.Editor
 
-private inline fun <T : Any> SharedPreferences.delegate(
+inline fun <T : Any> SharedPreferences.delegate(
     defaultValue: T,
     key: String?,
     crossinline getter: Getter<T>,

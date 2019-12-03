@@ -3,6 +3,7 @@ package tech.takenoko.cleanarchitecturex.extention
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import com.nhaarman.mockitokotlin2.mock
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -124,6 +125,19 @@ class SharedPreferencesTest {
         Assert.assertEquals(jsonPrefDef, Sample("test"))
     }
 
+    @Test
+    fun delegate() {
+        val read1 = preferences.delegate("def", "key", { _, _ -> "val" }, { _, _ -> MockSharedPreferences().edit() })
+        val v1 = read1.getValue("", mock { })
+        Assert.assertEquals(v1, "val")
+        read1.setValue("", mock {}, "value")
+
+        val read2 = preferences.delegate("def", null, { _, _ -> null }, { _, _ -> MockSharedPreferences().edit() })
+        val v2 = read2.getValue("", mock { })
+        Assert.assertEquals(v2, "def")
+        read2.setValue("", mock {}, "value")
+    }
+
     data class Sample(val text: String)
 
     var valBoolean: Boolean? = null
@@ -141,55 +155,20 @@ class SharedPreferencesTest {
         override fun getInt(key: String, defValue: Int): Int = valInt ?: defValue
         override fun getLong(key: String, defValue: Long): Long = valLong ?: defValue
         override fun getString(key: String, defValue: String?): String? = valString
-
-        override fun getStringSet(arg0: String, arg1: Set<String>?): Set<String>? {
-            throw UnsupportedOperationException()
-        }
-
-        override fun registerOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener) {
-            throw UnsupportedOperationException()
-        }
-
-        override fun unregisterOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener) {
-            throw UnsupportedOperationException()
-        }
-
+        override fun getStringSet(arg0: String, arg1: Set<String>?): Set<String>? = throw UnsupportedOperationException()
+        override fun registerOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener) = throw UnsupportedOperationException()
+        override fun unregisterOnSharedPreferenceChangeListener(listener: OnSharedPreferenceChangeListener) = throw UnsupportedOperationException()
         inner class MockEditor : Editor {
             override fun apply() {}
             override fun clear(): Editor = this
             override fun commit(): Boolean = true
-            override fun putBoolean(key: String, value: Boolean): Editor {
-                this@SharedPreferencesTest.valBoolean = value
-                return this
-            }
-
-            override fun putFloat(key: String, value: Float): Editor {
-                this@SharedPreferencesTest.valFloat = value
-                return this
-            }
-
-            override fun putInt(key: String, value: Int): Editor {
-                this@SharedPreferencesTest.valInt = value
-                return this
-            }
-
-            override fun putLong(key: String, value: Long): Editor {
-                this@SharedPreferencesTest.valLong = value
-                return this
-            }
-
-            override fun putString(key: String, value: String?): Editor {
-                this@SharedPreferencesTest.valString = value
-                return this
-            }
-
-            override fun putStringSet(arg0: String, arg1: Set<String>?): Editor {
-                throw UnsupportedOperationException()
-            }
-
-            override fun remove(key: String): Editor {
-                throw UnsupportedOperationException()
-            }
+            override fun putBoolean(key: String, value: Boolean): Editor = this.also { this@SharedPreferencesTest.valBoolean = value }
+            override fun putFloat(key: String, value: Float): Editor = this.also { this@SharedPreferencesTest.valFloat = value }
+            override fun putInt(key: String, value: Int) = this.also { this@SharedPreferencesTest.valInt = value }
+            override fun putLong(key: String, value: Long): Editor = this.also { this@SharedPreferencesTest.valLong = value }
+            override fun putString(key: String, value: String?): Editor = this.also { this@SharedPreferencesTest.valString = value }
+            override fun putStringSet(arg0: String, arg1: Set<String>?): Editor = throw UnsupportedOperationException()
+            override fun remove(key: String): Editor = throw UnsupportedOperationException()
         }
     }
 }

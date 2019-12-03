@@ -22,10 +22,10 @@ class UserRemoteDataSource : KoinComponent {
             url = getUserUrl,
             adapter = listAdapter()
         )
-        return restApi.fetch(param).let {
-            when (it) {
-                is ApiResult.Success -> it.value
-                is ApiResult.Failed -> throw it.cause
+        return when (val it = restApi.fetch(param)) {
+            is ApiResult.Success -> it.value
+            is ApiResult.Failed -> when (it.statusCode) {
+                else -> throw it.cause
             }
         }
     }
@@ -36,10 +36,10 @@ class UserRemoteDataSource : KoinComponent {
             url = addUserUrl,
             body = UserEntity("user1")
         )
-        return restApi.fetch(param).let {
-            when (it) {
-                is ApiResult.Success -> it.value
-                is ApiResult.Failed -> throw it.cause
+        return when (val it = restApi.fetch(param)) {
+            is ApiResult.Success -> it.value
+            is ApiResult.Failed -> when (it.statusCode) {
+                else -> throw it.cause
             }
         }
     }
@@ -49,12 +49,10 @@ class UserRemoteDataSource : KoinComponent {
         val param = Post<ResultEntity>(
             url = failedUrl
         )
-        return restApi.fetch(param).let {
-            when (it) {
-                is ApiResult.Success -> it.value
-                is ApiResult.Failed -> when (it.statusCode) {
-                    else -> throw it.cause
-                }
+        return when (val it = restApi.fetch(param)) {
+            is ApiResult.Success -> it.value
+            is ApiResult.Failed -> when (it.statusCode) {
+                else -> throw it.cause
             }
         }
     }

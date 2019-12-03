@@ -3,9 +3,12 @@ package tech.takenoko.cleanarchitecturex.view
 import android.app.Activity
 import android.content.Context
 import android.os.Build
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
 import com.nhaarman.mockitokotlin2.mock
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.android.synthetic.main.fragment_top.*
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -17,9 +20,9 @@ import org.koin.core.context.stopKoin
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.mockito.Mockito.`when`
+import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import tech.takenoko.cleanarchitecturex.usecase.LoadUserUsecase
 import tech.takenoko.cleanarchitecturex.viewmodel.TopViewModel
 
 @Config(sdk = [Build.VERSION_CODES.P])
@@ -42,27 +45,33 @@ class RecyclerViewAdapterTest {
 
     @Test
     fun onCreate_success() {
-
-        val recyclerViewAdapter = RecyclerViewAdapter()
-        recyclerViewAdapter.setItem(listOf("test"))
-        Assert.assertEquals(recyclerViewAdapter.itemCount, 1)
-
+        val controller = Robolectric.buildActivity(TestActivity::class.java).setup()
+        controller.pause()
+        val context = controller.get() as Context
         val bindingHolder = RecyclerViewAdapter.BindingHolder(mock {
             `when`(this.mock.root).thenReturn(mock { })
             `when`(this.mock.text).thenReturn("test")
         })
-        recyclerViewAdapter.onBindViewHolder(bindingHolder, 0)
+        controller.get().testView = RecyclerView(context).apply {
+            adapter = RecyclerViewAdapter()
+            (adapter as RecyclerViewAdapter).setItem(listOf("test"))
+            (adapter as RecyclerViewAdapter).onCreateViewHolder(MockViewGroup(context), 0)
+            (adapter as RecyclerViewAdapter).onBindViewHolder(bindingHolder, 0)
+            (adapter as RecyclerViewAdapter).notifyDataSetChanged()
+        }
+        controller.stop()
         Assert.assertEquals(bindingHolder.binding.text, "test")
     }
 
     private val mockModule: Module = module {
         factory { mock<TopViewModel> {} }
-        factory { MockLoadUserUsecase(ApplicationProvider.getApplicationContext(), mock { }) as LoadUserUsecase }
     }
 
-    private inner class MockLoadUserUsecase(context: Context, scope: CoroutineScope) : LoadUserUsecase(context, scope) {
-        override fun execute(param: Unit) {}
+    class MockViewGroup(context: Context) : ViewGroup(context) {
+        override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {}
     }
 
-    inner class TestActivity : Activity()
+    class TestActivity : Activity() {
+        lateinit var testView: View
+    }
 }

@@ -3,8 +3,6 @@ package tech.takenoko.cleanarchitecturex.view
 import android.app.Activity
 import android.content.Context
 import android.os.Build
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentFactory
 import androidx.navigation.Navigation
 import androidx.test.core.app.ApplicationProvider
 import com.nhaarman.mockitokotlin2.mock
@@ -52,11 +50,6 @@ class TopFragmentTest {
         controller.stop()
     }
 
-    private val fragmentFactory = object : FragmentFactory() {
-        override fun instantiate(classLoader: ClassLoader, className: String): Fragment =
-            if (className == TopFragment::class.java.name) TopFragment() else super.instantiate(classLoader, className)
-    }
-
     private val mockModule: Module = module {
         factory { TopViewModel() }
         factory { MockLoadUserUsecase(ApplicationProvider.getApplicationContext(), mock { }) as LoadUserUsecase }
@@ -66,5 +59,5 @@ class TopFragmentTest {
         override fun execute(param: Unit) {}
     }
 
-    inner class TestActivity : Activity()
+    class TestActivity : Activity()
 }
