@@ -17,18 +17,18 @@ import org.koin.dsl.module
 import org.koin.test.AutoCloseKoinTest
 import org.mockito.Mockito.*
 import tech.takenoko.cleanarchitecturex.entities.UsecaseResult
-import tech.takenoko.cleanarchitecturex.extention.*
-import tech.takenoko.cleanarchitecturex.repository.UserRepository
-import tech.takenoko.cleanarchitecturex.repository.local.UserLocalDataSource
-import tech.takenoko.cleanarchitecturex.utils.AppLog
+import tech.takenoko.cleanarchitecturex.extention.PENDING
+import tech.takenoko.cleanarchitecturex.extention.checkedObserver
+import tech.takenoko.cleanarchitecturex.extention.mockObserver
+import tech.takenoko.cleanarchitecturex.extention.toState
 
 @ExperimentalCoroutinesApi
-class LoadUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
+class BackgroundUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
 
     @get:Rule
     val rule: TestRule = InstantTaskExecutorRule()
 
-    private val mockObserver = mockObserver<UsecaseResult<List<String>>>()
+    private val mockObserver = mockObserver<UsecaseResult<Boolean>>()
 
     @Before
     fun before() {
@@ -42,32 +42,20 @@ class LoadUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
 
     @Test
     fun callAsync_success1() {
-        val loadUserUsecase by inject<LoadUserUsecase>()
-        loadUserUsecase.source.observeForever(mockObserver)
-        loadUserUsecase.execute(Unit)
+        val backgroundUsecase by inject<BackgroundUsecase>()
+        backgroundUsecase.source.observeForever(mockObserver)
+        backgroundUsecase.execute(Unit)
         checkedObserver(mockObserver) {
             Assert.assertEquals(it.toState(), PENDING)
         }
         Thread.sleep(1500)
         checkedObserver(mockObserver) {
-            val result = it as? UsecaseResult.Resolved
-            Assert.assertEquals(it.toState(), RESOLVED)
-            Assert.assertEquals(result?.value, listOf("testName"))
+            Assert.assertEquals(it.toState(), PENDING)
         }
     }
 
     private val mockModule: Module = module {
-        factory { LoadUserUsecase(context, testScope) }
-        factory { MockUserRepository() as UserRepository }
-    }
-
-    inner class MockUserRepository : UserRepository {
-        override suspend fun getAllUser(): List<UserLocalDataSource.User> = listOf(
-            UserLocalDataSource.User("testUid", "testName")
-        )
-        override suspend fun addUser(name: String) {
-            AppLog.debug("MockUserRepository", name)
-        }
+        factory { BackgroundUsecase(context, testScope) }
     }
 
     private val testScope = TestCoroutineScope()
