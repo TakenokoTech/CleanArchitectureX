@@ -9,14 +9,10 @@ import tech.takenoko.cleanarchitecturex.databinding.RecyclerItemBinding
 class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerViewAdapter.BindingHolder>() {
     private var list: MutableList<String> = mutableListOf()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindingHolder {
-        val binding = RecyclerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return BindingHolder(binding)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindingHolder =
+        BindingHolder(RecyclerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
-    override fun getItemCount(): Int {
-        return list.count()
-    }
+    override fun getItemCount(): Int = list.count()
 
     override fun onBindViewHolder(holder: BindingHolder, position: Int) {
         holder.binding.text = list[position]

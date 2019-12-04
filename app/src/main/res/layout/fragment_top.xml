@@ -5,9 +5,6 @@
 
     <data>
         <variable
-            name="adapter"
-            type="tech.takenoko.cleanarchitecturex.view.RecyclerViewAdapter"/>
-        <variable
             name="viewmodel"
             type="tech.takenoko.cleanarchitecturex.viewmodel.TopViewModel" />
     </data>

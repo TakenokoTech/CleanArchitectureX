@@ -19,6 +19,7 @@ class UserLocalDataSource : UserDao, KoinComponent {
         return database.userDao().getAll()
     }
 
+    @WorkerThread
     override suspend fun findByName(name: String): User {
         TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
@@ -28,6 +29,7 @@ class UserLocalDataSource : UserDao, KoinComponent {
         database.userDao().insertAll(*users)
     }
 
+    @WorkerThread
     override suspend fun delete(user: User) {
         TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
