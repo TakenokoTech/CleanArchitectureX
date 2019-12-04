@@ -24,7 +24,7 @@ sealed class ApiParameter<T : Any>(
         override val header: Map<String, Any> = mapOf(),
         override val adapter: Deserializable<T>? = null
     ) : ApiParameter<T>(url, parameters, header, null, adapter) {
-        override var method = "GET"
+        override val method = "GET"
         override val call = { url.httpGet(parameters.map { it.key to it.value }) }
     }
 
@@ -35,7 +35,7 @@ sealed class ApiParameter<T : Any>(
         override val body: Any? = null,
         override val adapter: Deserializable<T>? = null
     ) : ApiParameter<T>(url, parameters, header, body, adapter) {
-        override var method = "POST"
+        override val method = "POST"
         override val call = { url.httpPost(parameters.map { it.key to it.value }) }
     }
 }

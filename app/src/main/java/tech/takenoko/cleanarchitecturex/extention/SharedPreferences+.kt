@@ -2,7 +2,6 @@ package tech.takenoko.cleanarchitecturex.extention
 
 import android.content.SharedPreferences
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.Moshi
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -51,16 +50,6 @@ fun SharedPreferences.string(
 ): ReadWriteProperty<Any, String> =
     delegate(defaultValue, key, SharedPreferences::getString, SharedPreferences.Editor::putString)
 
-/*
- * Moshi Json String Read Write Delegate
- */
-inline fun <reified T : Any> SharedPreferences.json(
-    moshi: Moshi,
-    defaultValue: Lazy<T>,
-    key: String? = null
-): ReadWriteProperty<Any, T> =
-    json(moshi.adapter(T::class.java), defaultValue, key)
-
 /**
  * Moshi Json String Read Write Delegate
  */
@@ -83,7 +72,7 @@ fun <T : Any> SharedPreferences.json(
 private typealias Getter<T> = SharedPreferences.(key: String, defaultValue: T) -> T?
 private typealias Setter<T> = SharedPreferences.Editor.(key: String, value: T) -> SharedPreferences.Editor
 
-private inline fun <T : Any> SharedPreferences.delegate(
+inline fun <T : Any> SharedPreferences.delegate(
     defaultValue: T,
     key: String?,
     crossinline getter: Getter<T>,

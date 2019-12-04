@@ -18,11 +18,12 @@ class MockRestApi : AppRestApi {
             )
                 return result as ApiResult<T>
         }
+        println("responsePattern: $response")
         println("url: ${param.url}")
         println("parameters: ${param.parameters}")
         println("header: ${param.header}")
         println("body: ${param.body}")
-        throw Exception()
+        throw Exception("No test pattern.")
     }
 
     companion object {

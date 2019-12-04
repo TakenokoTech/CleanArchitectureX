@@ -6,12 +6,10 @@ import androidx.lifecycle.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineScope
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import org.junit.rules.TestRule
 import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
 import org.koin.core.inject
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -33,7 +31,7 @@ import tech.takenoko.cleanarchitecturex.repository.remote.UserRemoteDataSource.C
 import tech.takenoko.cleanarchitecturex.repository.remote.UserRemoteDataSource.Companion.getUserUrl
 
 @ExperimentalCoroutinesApi
-class LoadUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
+class UserRepositoryTest : AutoCloseKoinTest(), LifecycleOwner {
     @get:Rule
     val rule: TestRule = InstantTaskExecutorRule()
 
@@ -46,11 +44,16 @@ class LoadUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
         MockDatabase.userDao = userDao
     }
 
+    @After
+    fun tearDown() {
+        stopKoin()
+    }
+
     @Test
     fun getAllUser_success1() = runBlocking {
         // mock api
         val getUserUrlParam = Get<List<UserEntity>>(url = getUserUrl)
-        val getUserUrlResponse = ApiResult.Success<List<UserEntity>>(listOf())
+        val getUserUrlResponse = ApiResult.Success(listOf(UserEntity("testName")))
         MockRestApi.response[getUserUrlParam] = getUserUrlResponse
         // mock db
         getAll = listOf(UserLocalDataSource.User("testName", "testName"))
@@ -64,7 +67,7 @@ class LoadUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
     fun addUser_success1() = runBlocking {
         // mock api
         val getUserUrlParam = Post<List<UserEntity>>(url = addUserUrl, body = UserEntity("user1"))
-        val getUserUrlResponse = ApiResult.Success(ResultEntity(""))
+        val getUserUrlResponse = ApiResult.Success(ResultEntity("true"))
         MockRestApi.response[getUserUrlParam] = getUserUrlResponse
         // verification
         val userRepository by inject<UserRepository>()

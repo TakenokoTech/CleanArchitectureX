@@ -46,6 +46,15 @@ android {
     dataBinding {
         enabled = true
     }
+
+    testOptions.unitTests{
+        includeAndroidResources = true
+        all {
+            jacoco {
+                includeNoLocationClasses = true
+            }
+        }
+    }
 }
 
 configurations {
@@ -62,6 +71,15 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    // Robolectric
+    testImplementation 'org.robolectric:robolectric:4.3.1'
+    testImplementation 'androidx.test:core:1.2.0'
+    testImplementation 'androidx.test:runner:1.2.0'
+    testImplementation 'androidx.test:rules:1.2.0'
+    testImplementation 'androidx.test.ext:junit:1.1.1'
+    testImplementation 'androidx.test.ext:truth:1.2.0'
+    testImplementation 'androidx.fragment:fragment-testing:1.1.0'
 
     // Mockito-Kotlin
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
@@ -141,5 +159,37 @@ task ktlintFormat(type: JavaExec, group: "formatting") {
 }
 
 jacocoAndroidUnitTestReport {
-    excludes += ['**/di/**', '**/databinding/**']
+    excludes += [
+        '**/di/**',
+        '**/entities/room/**',
+        '**/App.*',
+        '**/App$*',
+        '**/AppLog.*',
+        '**/R.class',
+        '**/R$*.class',
+        '**/BR.*',
+        '**/*Binding.*',
+        '**/*BindingImpl.*',
+        '**/DataBindingInfo.class',
+        '**/DataBinderMapperImpl.class',
+        '**/DataBinderMapperImpl$*.class',
+        '**/databinding/*',
+        '**/*$ViewInjector*.*',
+        '**/*$ViewBinder*.*',
+        '**/databinding/**/*.*',
+        '**/android/databinding/*Binding.*',
+        '**/BuildConfig.*',
+        '**/Manifest*.*',
+        '**/*_MembersInjector.*',
+        '**/Dagger*Component.*',
+        '**/Dagger*Component$Builder.*',
+        '**/*Module_*Factory.*',
+        '**/*Module*.*',
+        // '**/*Fragment*.*',
+        // '**/*Activity*.*',
+        // '**/*Service*.*',
+        // '**/*Adapter*.*',
+        // '**/*ViewPager*.*',
+        // '**/*ViewHolder*.*',
+    ]
 }
