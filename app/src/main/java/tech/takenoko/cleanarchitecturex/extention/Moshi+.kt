@@ -10,6 +10,7 @@ val OBJECT_MAPPER: Moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build
 /**
  * moshi adapter
  */
+inline fun <reified T : Any> planeAdapter() = planeAdapter(T::class.java)
 fun <T : Any> planeAdapter(clazz: Class<T>) = object : ResponseDeserializable<T> {
     override fun deserialize(content: String): T? = OBJECT_MAPPER
     .adapter(clazz)
@@ -19,9 +20,10 @@ fun <T : Any> planeAdapter(clazz: Class<T>) = object : ResponseDeserializable<T>
 /**
  * moshi list adapter
  */
-inline fun <reified T : Any> listAdapter() = object : ResponseDeserializable<List<T>> {
+inline fun <reified T : Any> listAdapter() = listAdapter(T::class.java)
+fun <T : Any> listAdapter(clazz: Class<T>) = object : ResponseDeserializable<List<T>> {
     override fun deserialize(content: String): List<T>? {
-        val type = Types.newParameterizedType(List::class.java, T::class.java)
+        val type = Types.newParameterizedType(List::class.java, clazz)
         val listAdapter = OBJECT_MAPPER.adapter<List<T>>(type)
         return listAdapter.fromJson(content)
     }
