@@ -1,24 +1,25 @@
 package tech.takenoko.cleanarchitecturex.repository.local
 
-import android.content.Context
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import tech.takenoko.cleanarchitecturex.di.AppDatabase
 import tech.takenoko.cleanarchitecturex.entities.room.UserDao
 
-class UserLocalDataSource(context: Context) :
-    UserDao {
+class UserLocalDataSource : UserDao, KoinComponent {
 
-    private val database = AppDatabase.getDatabase(context)
+    private val database: AppDatabase by inject()
 
     @WorkerThread
     override suspend fun getAll(): List<User> {
         return database.userDao().getAll()
     }
 
+    @WorkerThread
     override suspend fun findByName(name: String): User {
         TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
@@ -28,6 +29,7 @@ class UserLocalDataSource(context: Context) :
         database.userDao().insertAll(*users)
     }
 
+    @WorkerThread
     override suspend fun delete(user: User) {
         TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }

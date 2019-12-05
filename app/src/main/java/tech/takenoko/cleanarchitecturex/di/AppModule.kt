@@ -29,11 +29,13 @@ private val repositoryModules = module {
 }
 
 private val localModules = module {
-    single { UserLocalDataSource(androidContext() as Application) }
+    single { AppDatabase.getDatabase(androidContext() as Application) }
+    single { UserLocalDataSource() }
 }
 
 private val remoteModules = module {
-    single { UserRemoteDataSource(androidContext() as Application) }
+    single { AppRestApiImpl() as AppRestApi }
+    single { UserRemoteDataSource() }
 }
 
 val diModules = listOf(

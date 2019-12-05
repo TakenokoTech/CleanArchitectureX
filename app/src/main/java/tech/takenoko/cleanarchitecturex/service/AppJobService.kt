@@ -27,21 +27,22 @@ class AppJobService : JobService(), LifecycleOwner {
 
     override fun onStartJob(params: JobParameters?): Boolean {
         AppLog.info(TAG, ">>> onStartJob")
-
-        backgroundUsecase.source.observe(this@AppJobService, Observer<UsecaseResult<Boolean>> {
-            if (it.isFinished()) {
-                AppLog.info(TAG, "<<< onStartJob")
-                jobFinished(params, false)
-            }
-        })
-
+        backgroundUsecase.source.observe(this@AppJobService, observer(params))
         backgroundUsecase.execute(Unit)
         return true
     }
 
     override fun onStopJob(params: JobParameters?): Boolean {
+        AppLog.info(TAG, ">>> onStopJob")
         jobFinished(params, false)
         return false
+    }
+
+    fun observer(params: JobParameters?) = Observer<UsecaseResult<Boolean>> {
+        if (it.isFinished()) {
+            AppLog.info(TAG, "<<< onStartJob")
+            jobFinished(params, false)
+        }
     }
 
     companion object {

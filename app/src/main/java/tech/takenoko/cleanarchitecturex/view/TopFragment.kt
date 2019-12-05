@@ -31,7 +31,6 @@ class TopFragment : Fragment() {
         val binding = DataBindingUtil.inflate<FragmentTopBinding>(inflater, R.layout.fragment_top, container, false).apply {
             lifecycleOwner = this@TopFragment
             viewmodel = viewModel
-            adapter = RecyclerViewAdapter()
         }
         return binding.root
     }

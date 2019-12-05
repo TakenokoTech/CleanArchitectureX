@@ -8,7 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import tech.takenoko.cleanarchitecturex.utils.AppLog
 
-class BackgroundUsecase(context: Context, private val scope: CoroutineScope) : AsyncUsecase<Unit, Boolean>(context, scope) {
+open class BackgroundUsecase(context: Context, private val scope: CoroutineScope) : AsyncUsecase<Unit, Boolean>(context, scope) {
 
     @WorkerThread
     override suspend fun callAsync(param: Unit): Deferred<Boolean> = scope.async(Dispatchers.IO) {
