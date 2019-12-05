@@ -17,7 +17,7 @@ import org.koin.dsl.module
 import org.koin.test.AutoCloseKoinTest
 import org.mockito.Mockito.*
 import tech.takenoko.cleanarchitecturex.entities.UsecaseResult
-import tech.takenoko.cleanarchitecturex.extention.*
+import tech.takenoko.cleanarchitecturex.extension.*
 
 @ExperimentalCoroutinesApi
 class BackgroundUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {

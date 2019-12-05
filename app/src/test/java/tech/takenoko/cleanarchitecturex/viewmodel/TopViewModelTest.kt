@@ -18,8 +18,8 @@ import org.koin.dsl.module
 import org.koin.test.AutoCloseKoinTest
 import org.mockito.Mockito
 import tech.takenoko.cleanarchitecturex.entities.UsecaseResult
-import tech.takenoko.cleanarchitecturex.extention.checkedObserver
-import tech.takenoko.cleanarchitecturex.extention.mockObserver
+import tech.takenoko.cleanarchitecturex.extension.checkedObserver
+import tech.takenoko.cleanarchitecturex.extension.mockObserver
 import tech.takenoko.cleanarchitecturex.usecase.LoadUserUsecase
 
 @ExperimentalCoroutinesApi

@@ -1,4 +1,4 @@
-package tech.takenoko.cleanarchitecturex.extention
+package tech.takenoko.cleanarchitecturex.extension
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor

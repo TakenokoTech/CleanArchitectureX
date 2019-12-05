@@ -10,7 +10,7 @@ import tech.takenoko.cleanarchitecturex.entities.Get
 import tech.takenoko.cleanarchitecturex.entities.Post
 import tech.takenoko.cleanarchitecturex.entities.response.ResultEntity
 import tech.takenoko.cleanarchitecturex.entities.response.UserEntity
-import tech.takenoko.cleanarchitecturex.extention.listAdapter
+import tech.takenoko.cleanarchitecturex.extension.listAdapter
 
 class UserRemoteDataSource : KoinComponent {
 
@@ -45,7 +45,7 @@ class UserRemoteDataSource : KoinComponent {
     }
 
     companion object {
-        const val getUserUrl = "https://us-central1-takenokotechapi.cloudfunctions.net/getUser"
-        const val addUserUrl = "https://us-central1-takenokotechapi.cloudfunctions.net/addUser"
+        const val getUserUrl = "https://xxxx/getUser"
+        const val addUserUrl = "https://xxxx/addUser"
     }
 }

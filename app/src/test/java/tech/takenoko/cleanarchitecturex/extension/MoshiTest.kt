@@ -1,4 +1,4 @@
-package tech.takenoko.cleanarchitecturex.extention
+package tech.takenoko.cleanarchitecturex.extension
 
 import com.nhaarman.mockitokotlin2.mock
 import org.junit.Assert

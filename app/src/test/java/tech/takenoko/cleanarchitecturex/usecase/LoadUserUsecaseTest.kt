@@ -17,7 +17,7 @@ import org.koin.dsl.module
 import org.koin.test.AutoCloseKoinTest
 import org.mockito.Mockito.*
 import tech.takenoko.cleanarchitecturex.entities.UsecaseResult
-import tech.takenoko.cleanarchitecturex.extention.*
+import tech.takenoko.cleanarchitecturex.extension.*
 import tech.takenoko.cleanarchitecturex.repository.UserRepository
 import tech.takenoko.cleanarchitecturex.repository.local.UserLocalDataSource
 import tech.takenoko.cleanarchitecturex.utils.AppLog
