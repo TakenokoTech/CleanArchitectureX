@@ -5,7 +5,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ServiceLifecycleDispatcher
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.junit.*
 import org.junit.rules.TestRule
@@ -40,8 +40,9 @@ class LoadUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
         stopKoin()
     }
 
-    @Test
-    fun callAsync_success1() {
+    @Test(timeout = 2000)
+    fun callAsync_success_not_null() {
+        allUser = listOf(UserLocalDataSource.User("testUid", "testName"))
         val loadUserUsecase by inject<LoadUserUsecase>()
         loadUserUsecase.source.observeForever(mockObserver)
         loadUserUsecase.execute(Unit)
@@ -56,15 +57,31 @@ class LoadUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
         }
     }
 
+    @Test(timeout = 2000)
+    fun callAsync_success_null() {
+        allUser = listOf(UserLocalDataSource.User("testUid", null))
+        val loadUserUsecase by inject<LoadUserUsecase>()
+        loadUserUsecase.source.observeForever(mockObserver)
+        loadUserUsecase.execute(Unit)
+        checkedObserver(mockObserver) {
+            Assert.assertEquals(it.toState(), PENDING)
+        }
+        Thread.sleep(1500)
+        checkedObserver(mockObserver) {
+            val result = it as? UsecaseResult.Resolved
+            Assert.assertEquals(it.toState(), RESOLVED)
+            Assert.assertEquals(result?.value, listOf<String>())
+        }
+    }
+
     private val mockModule: Module = module {
         factory { LoadUserUsecase(context, testScope) }
         factory { MockUserRepository() as UserRepository }
     }
 
+    var allUser = listOf<UserLocalDataSource.User>()
     inner class MockUserRepository : UserRepository {
-        override suspend fun getAllUser(): List<UserLocalDataSource.User> = listOf(
-            UserLocalDataSource.User("testUid", "testName")
-        )
+        override suspend fun getAllUser(): List<UserLocalDataSource.User> = allUser
         override suspend fun addUser(name: String) {
             AppLog.debug("MockUserRepository", name)
         }

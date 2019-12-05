@@ -42,6 +42,24 @@ class TopViewModelTest : AutoCloseKoinTest(), LifecycleOwner {
     }
 
     @Test
+    fun pending() {
+        val topViewModel by inject<TopViewModel>()
+        topViewModel.text1.observeForever(mockObserverString)
+        topViewModel.list1.observeForever(mockObserverListString)
+
+        // Before
+        Assert.assertEquals(topViewModel.text1.value, null)
+        Assert.assertEquals(topViewModel.list1.value, null)
+
+        // Execute
+        loadUserUsecaseValue = UsecaseResult.Pending()
+        topViewModel.load()
+
+        // After
+        checkedObserver(mockObserverString) { Assert.assertEquals(it, "loading...") }
+    }
+
+    @Test
     fun success() {
         val topViewModel by inject<TopViewModel>()
         topViewModel.text1.observeForever(mockObserverString)

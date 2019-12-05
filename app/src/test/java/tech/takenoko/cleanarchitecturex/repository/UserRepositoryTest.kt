@@ -83,13 +83,10 @@ class UserRepositoryTest : AutoCloseKoinTest(), LifecycleOwner {
     }
 
     var getAll = listOf<UserLocalDataSource.User>()
-    var findByName = UserLocalDataSource.User("", "")
 
     private val userDao = object : UserDao {
         override suspend fun insertAll(vararg users: UserLocalDataSource.User) {}
-        override suspend fun delete(user: UserLocalDataSource.User) {}
         override suspend fun getAll(): List<UserLocalDataSource.User> = getAll
-        override suspend fun findByName(name: String): UserLocalDataSource.User = findByName
         override suspend fun deleteAll() {}
         override fun getAllToLive(): LiveData<List<UserLocalDataSource.User>> = MediatorLiveData()
     }

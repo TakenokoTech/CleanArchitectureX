@@ -72,15 +72,15 @@ fun <T : Any> SharedPreferences.json(
 private typealias Getter<T> = SharedPreferences.(key: String, defaultValue: T) -> T?
 private typealias Setter<T> = SharedPreferences.Editor.(key: String, value: T) -> SharedPreferences.Editor
 
-inline fun <T : Any> SharedPreferences.delegate(
+fun <T : Any> SharedPreferences.delegate(
     defaultValue: T,
     key: String?,
-    crossinline getter: Getter<T>,
-    crossinline setter: Setter<T>
+    getter: Getter<T>,
+    setter: Setter<T>
 ) = object : ReadWriteProperty<Any, T> {
     override fun getValue(thisRef: Any, property: KProperty<*>) =
-        getter(key ?: property.name, defaultValue) ?: defaultValue
+            getter(key ?: property.name, defaultValue) ?: defaultValue
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: T) =
-        edit().setter(key ?: property.name, value).apply()
+            edit().setter(key ?: property.name, value).apply()
 }

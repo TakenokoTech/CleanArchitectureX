@@ -17,10 +17,7 @@ import org.koin.dsl.module
 import org.koin.test.AutoCloseKoinTest
 import org.mockito.Mockito.*
 import tech.takenoko.cleanarchitecturex.entities.UsecaseResult
-import tech.takenoko.cleanarchitecturex.extention.PENDING
-import tech.takenoko.cleanarchitecturex.extention.checkedObserver
-import tech.takenoko.cleanarchitecturex.extention.mockObserver
-import tech.takenoko.cleanarchitecturex.extention.toState
+import tech.takenoko.cleanarchitecturex.extention.*
 
 @ExperimentalCoroutinesApi
 class BackgroundUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
@@ -44,13 +41,13 @@ class BackgroundUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
     fun callAsync_success1() {
         val backgroundUsecase by inject<BackgroundUsecase>()
         backgroundUsecase.source.observeForever(mockObserver)
-        backgroundUsecase.execute(Unit)
+        backgroundUsecase.execute(BackgroundUsecase.BackgroundUsecaseParam(count = 1, sleepTime = 10))
         checkedObserver(mockObserver) {
             Assert.assertEquals(it.toState(), PENDING)
         }
-        Thread.sleep(1500)
+        Thread.sleep(1000)
         checkedObserver(mockObserver) {
-            Assert.assertEquals(it.toState(), PENDING)
+            Assert.assertEquals(it.toState(), RESOLVED)
         }
     }
 

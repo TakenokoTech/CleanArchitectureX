@@ -56,18 +56,6 @@ class UserRemoteDataSourceTest : AutoCloseKoinTest() {
         Assert.assertEquals(result.exceptionOrNull()?.localizedMessage, errorResponse.localizedMessage)
     }
 
-    @Test
-    fun postFailed_failed() = runBlocking {
-        // mock api
-        val postFailedParam = Post<List<UserEntity>>(url = UserRemoteDataSource.failedUrl)
-        val postFailedResponse = ApiResult.Failed<List<UserEntity>>(errorResponse, HttpStatusCode.INTERNAL_SERVER_ERROR.code)
-        MockRestApi.response[postFailedParam] = postFailedResponse
-        // verification
-        val userRemoteDataSource by inject<UserRemoteDataSource>()
-        val result = kotlin.runCatching { userRemoteDataSource.postFailed() }
-        Assert.assertEquals(result.exceptionOrNull()?.localizedMessage, errorResponse.localizedMessage)
-    }
-
     private val mockModule: Module = module {
         factory { MockRestApi() as AppRestApi }
         factory { UserRemoteDataSource() }

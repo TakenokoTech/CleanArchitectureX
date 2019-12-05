@@ -9,6 +9,7 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 import tech.takenoko.cleanarchitecturex.di.AppDatabase
 import tech.takenoko.cleanarchitecturex.entities.room.UserDao
+import tech.takenoko.cleanarchitecturex.utils.AppLog
 
 class UserLocalDataSource : UserDao, KoinComponent {
 
@@ -20,18 +21,9 @@ class UserLocalDataSource : UserDao, KoinComponent {
     }
 
     @WorkerThread
-    override suspend fun findByName(name: String): User {
-        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
-    }
-
-    @WorkerThread
     override suspend fun insertAll(vararg users: User) {
+        AppLog.debug(TAG, "${users.map { it.uid }}")
         database.userDao().insertAll(*users)
-    }
-
-    @WorkerThread
-    override suspend fun delete(user: User) {
-        TODO("not implemented") // To change body of created functions use File | Settings | File Templates.
     }
 
     @WorkerThread
@@ -49,4 +41,8 @@ class UserLocalDataSource : UserDao, KoinComponent {
         @PrimaryKey val uid: String,
         @ColumnInfo(name = "name") val name: String?
     )
+
+    companion object {
+        val TAG = UserLocalDataSource::class.java.simpleName
+    }
 }
