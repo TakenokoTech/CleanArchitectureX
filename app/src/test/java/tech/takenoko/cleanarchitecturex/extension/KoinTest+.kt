@@ -1,4 +1,4 @@
-package tech.takenoko.cleanarchitecturex.extention
+package tech.takenoko.cleanarchitecturex.extension
 
 import androidx.annotation.MainThread
 import androidx.lifecycle.Observer

@@ -8,7 +8,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.mockito.Mockito.`when`
 import tech.takenoko.cleanarchitecturex.entities.ApiParameter
-import tech.takenoko.cleanarchitecturex.extention.planeAdapter
+import tech.takenoko.cleanarchitecturex.extension.planeAdapter
 
 @ExperimentalCoroutinesApi
 class AppRestApiTest : MockHttpTestCase() {

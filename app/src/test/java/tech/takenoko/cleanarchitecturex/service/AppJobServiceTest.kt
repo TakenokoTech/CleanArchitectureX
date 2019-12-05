@@ -55,7 +55,7 @@ class AppJobServiceTest : AutoCloseKoinTest() {
     }
 
     private inner class MockBackgroundUsecase(context: Context, scope: CoroutineScope) : BackgroundUsecase(context, scope) {
-        override fun execute(param: Unit) {
+        override fun execute(param: BackgroundUsecaseParam) {
             result.postValue(UsecaseResult.Resolved(true))
         }
     }

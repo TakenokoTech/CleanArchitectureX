@@ -18,8 +18,8 @@ import org.koin.dsl.module
 import org.koin.test.AutoCloseKoinTest
 import org.mockito.Mockito
 import tech.takenoko.cleanarchitecturex.entities.UsecaseResult
-import tech.takenoko.cleanarchitecturex.extention.checkedObserver
-import tech.takenoko.cleanarchitecturex.extention.mockObserver
+import tech.takenoko.cleanarchitecturex.extension.checkedObserver
+import tech.takenoko.cleanarchitecturex.extension.mockObserver
 import tech.takenoko.cleanarchitecturex.usecase.LoadUserUsecase
 
 @ExperimentalCoroutinesApi
@@ -39,6 +39,24 @@ class TopViewModelTest : AutoCloseKoinTest(), LifecycleOwner {
     @After
     fun tearDown() {
         stopKoin()
+    }
+
+    @Test
+    fun pending() {
+        val topViewModel by inject<TopViewModel>()
+        topViewModel.text1.observeForever(mockObserverString)
+        topViewModel.list1.observeForever(mockObserverListString)
+
+        // Before
+        Assert.assertEquals(topViewModel.text1.value, null)
+        Assert.assertEquals(topViewModel.list1.value, null)
+
+        // Execute
+        loadUserUsecaseValue = UsecaseResult.Pending()
+        topViewModel.load()
+
+        // After
+        checkedObserver(mockObserverString) { Assert.assertEquals(it, "loading...") }
     }
 
     @Test

@@ -158,6 +158,7 @@ task ktlintFormat(type: JavaExec, group: "formatting") {
     args "-F", "src/**/*.kt"
 }
 
+jacoco { toolVersion = "0.8.5" }
 jacocoAndroidUnitTestReport {
     excludes += [
         '**/di/**',

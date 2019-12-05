@@ -8,15 +8,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import tech.takenoko.cleanarchitecturex.utils.AppLog
 
-open class BackgroundUsecase(context: Context, private val scope: CoroutineScope) : AsyncUsecase<Unit, Boolean>(context, scope) {
+open class BackgroundUsecase(context: Context, private val scope: CoroutineScope) : AsyncUsecase<BackgroundUsecase.BackgroundUsecaseParam, Boolean>(context, scope) {
 
     @WorkerThread
-    override suspend fun callAsync(param: Unit): Deferred<Boolean> = scope.async(Dispatchers.IO) {
+    override suspend fun callAsync(param: BackgroundUsecaseParam): Deferred<Boolean> = scope.async(Dispatchers.IO) {
         AppLog.info(TAG, "callAsync")
 
-        repeat((0..1000).count()) {
+        repeat((0..param.count).count()) {
             AppLog.info(TAG, "job...(${timeFormat(it * 10000L)})")
-            Thread.sleep(10000)
+            Thread.sleep(param.sleepTime)
         }
 
         return@async true
@@ -32,4 +32,6 @@ open class BackgroundUsecase(context: Context, private val scope: CoroutineScope
     companion object {
         private val TAG = BackgroundUsecase::class.java.simpleName
     }
+
+    data class BackgroundUsecaseParam(val count: Int = 1000, val sleepTime: Long = 10000)
 }

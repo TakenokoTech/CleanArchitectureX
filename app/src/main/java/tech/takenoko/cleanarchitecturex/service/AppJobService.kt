@@ -28,7 +28,7 @@ class AppJobService : JobService(), LifecycleOwner {
     override fun onStartJob(params: JobParameters?): Boolean {
         AppLog.info(TAG, ">>> onStartJob")
         backgroundUsecase.source.observe(this@AppJobService, observer(params))
-        backgroundUsecase.execute(Unit)
+        backgroundUsecase.execute(BackgroundUsecase.BackgroundUsecaseParam())
         return true
     }
 

@@ -6,8 +6,8 @@ import kotlin.reflect.KClass
 import tech.takenoko.cleanarchitecturex.BuildConfig
 import tech.takenoko.cleanarchitecturex.entities.ApiParameter
 import tech.takenoko.cleanarchitecturex.entities.ApiResult
-import tech.takenoko.cleanarchitecturex.extention.OBJECT_MAPPER
-import tech.takenoko.cleanarchitecturex.extention.planeAdapter
+import tech.takenoko.cleanarchitecturex.extension.OBJECT_MAPPER
+import tech.takenoko.cleanarchitecturex.extension.planeAdapter
 import tech.takenoko.cleanarchitecturex.utils.AppLog
 
 /**

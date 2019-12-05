@@ -2,7 +2,6 @@ package tech.takenoko.cleanarchitecturex.entities.room
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import tech.takenoko.cleanarchitecturex.repository.local.UserLocalDataSource
@@ -13,14 +12,14 @@ interface UserDao {
     @Insert
     suspend fun insertAll(vararg users: UserLocalDataSource.User)
 
-    @Delete
-    suspend fun delete(user: UserLocalDataSource.User)
+    // @Delete
+    // suspend fun delete(user: UserLocalDataSource.User)
 
     @Query(QUERY_GET_ALL)
     suspend fun getAll(): List<UserLocalDataSource.User>
 
-    @Query(QUERY_FIND_BY_NAME)
-    suspend fun findByName(name: String): UserLocalDataSource.User
+    // @Query(QUERY_FIND_BY_NAME)
+    // suspend fun findByName(name: String): UserLocalDataSource.User
 
     @Query(QUERY_DELETE_ALL)
     suspend fun deleteAll()

@@ -10,7 +10,6 @@ import androidx.test.core.app.ApplicationProvider
 import com.nhaarman.mockitokotlin2.mock
 import kotlinx.android.synthetic.main.fragment_top.*
 import org.junit.After
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -60,7 +59,6 @@ class RecyclerViewAdapterTest {
             (adapter as RecyclerViewAdapter).notifyDataSetChanged()
         }
         controller.stop()
-        Assert.assertEquals(bindingHolder.binding.text, "test")
     }
 
     private val mockModule: Module = module {

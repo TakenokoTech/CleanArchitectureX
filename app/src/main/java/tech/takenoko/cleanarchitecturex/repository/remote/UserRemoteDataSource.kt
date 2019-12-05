@@ -10,7 +10,7 @@ import tech.takenoko.cleanarchitecturex.entities.Get
 import tech.takenoko.cleanarchitecturex.entities.Post
 import tech.takenoko.cleanarchitecturex.entities.response.ResultEntity
 import tech.takenoko.cleanarchitecturex.entities.response.UserEntity
-import tech.takenoko.cleanarchitecturex.extention.listAdapter
+import tech.takenoko.cleanarchitecturex.extension.listAdapter
 
 class UserRemoteDataSource : KoinComponent {
 
@@ -44,22 +44,8 @@ class UserRemoteDataSource : KoinComponent {
         }
     }
 
-    @WorkerThread
-    suspend fun postFailed(): ResultEntity {
-        val param = Post<ResultEntity>(
-            url = failedUrl
-        )
-        return when (val it = restApi.fetch(param)) {
-            is ApiResult.Success -> it.value
-            is ApiResult.Failed -> when (it.statusCode) {
-                else -> throw it.cause
-            }
-        }
-    }
-
     companion object {
-        const val getUserUrl = "https://us-central1-takenokotechapi.cloudfunctions.net/getUser"
-        const val addUserUrl = "https://us-central1-takenokotechapi.cloudfunctions.net/addUser"
-        const val failedUrl = "https://us-central1-takenokotechapi.cloudfunctions.net/failed"
+        const val getUserUrl = "https://xxxx/getUser"
+        const val addUserUrl = "https://xxxx/addUser"
     }
 }

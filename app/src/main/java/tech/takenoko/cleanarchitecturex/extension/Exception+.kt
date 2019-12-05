@@ -1,0 +1,1 @@
+package tech.takenoko.cleanarchitecturex.extension

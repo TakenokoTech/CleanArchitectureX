@@ -1,4 +1,4 @@
-package tech.takenoko.cleanarchitecturex.extention
+package tech.takenoko.cleanarchitecturex.extension
 
 import com.github.kittinunf.fuel.core.ResponseDeserializable
 import com.squareup.moshi.Moshi
