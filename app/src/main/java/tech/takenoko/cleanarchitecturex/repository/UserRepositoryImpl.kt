@@ -32,7 +32,8 @@ class UserRepositoryImpl : UserRepository, KoinComponent {
     @WorkerThread
     override suspend fun addUser(name: String) {
         AppLog.info(TAG, "addUser")
-        network.postUser()
+        val result = network.postUser()
+        AppLog.info(TAG, "postUser ==> $result")
         return local.insertAll(
             UserLocalDataSource.User(
                 UUID.randomUUID().toString(),

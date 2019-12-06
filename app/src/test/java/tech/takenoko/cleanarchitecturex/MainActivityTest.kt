@@ -43,7 +43,9 @@ class MainActivityTest {
     @Test
     fun mainActivity_onCreate_success() {
         val controller = buildActivity(MainActivity::class.java).setup()
-        controller.pause().stop()
+        controller.pause()
+        controller.get().onSupportNavigateUp()
+        controller.stop()
 
         val fragment = controller.get().findViewById<View>(R.id.nav_host_fragment)
         Assert.assertEquals(fragment.id, R.id.nav_host_fragment)
