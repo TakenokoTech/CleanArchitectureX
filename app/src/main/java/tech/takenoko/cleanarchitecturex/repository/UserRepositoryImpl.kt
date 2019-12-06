@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import java.util.UUID
 import org.koin.core.KoinComponent
 import org.koin.core.inject
+import tech.takenoko.cleanarchitecturex.entities.response.UserEntity
 import tech.takenoko.cleanarchitecturex.repository.local.UserLocalDataSource
 import tech.takenoko.cleanarchitecturex.repository.remote.UserRemoteDataSource
 import tech.takenoko.cleanarchitecturex.utils.AppLog
@@ -32,7 +33,7 @@ class UserRepositoryImpl : UserRepository, KoinComponent {
     @WorkerThread
     override suspend fun addUser(name: String) {
         AppLog.info(TAG, "addUser")
-        val result = network.postUser()
+        val result = network.postUser(user = UserEntity(name))
         AppLog.info(TAG, "postUser ==> $result")
         return local.insertAll(
             UserLocalDataSource.User(

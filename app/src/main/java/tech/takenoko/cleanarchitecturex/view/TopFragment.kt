@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_top.*
 import org.koin.android.ext.android.inject
@@ -45,6 +46,7 @@ class TopFragment : Fragment() {
         val adapter = RecyclerViewAdapter()
         recycler.layoutManager = LinearLayoutManager(context)
         recycler.adapter = adapter
+        recycler.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager(activity).orientation))
         viewModel.list1.observe(this, Observer { list -> adapter.setItem(list) })
     }
 

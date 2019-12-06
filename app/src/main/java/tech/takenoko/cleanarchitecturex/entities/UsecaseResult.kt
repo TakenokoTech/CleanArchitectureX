@@ -14,3 +14,10 @@ fun <P> UsecaseResult<P>.isFinished() = when (this) {
     is UsecaseResult.Resolved -> true
     is UsecaseResult.Rejected -> true
 }
+
+fun <P> UsecaseResult<P>?.isLoading() = when (this) {
+    is UsecaseResult.Pending -> true
+    is UsecaseResult.Resolved -> false
+    is UsecaseResult.Rejected -> false
+    else -> false
+}

@@ -21,6 +21,7 @@ import org.koin.test.AutoCloseKoinTest
 import org.mockito.Mockito
 import tech.takenoko.cleanarchitecturex.entities.UsecaseResult
 import tech.takenoko.cleanarchitecturex.entities.isFinished
+import tech.takenoko.cleanarchitecturex.entities.isLoading
 import tech.takenoko.cleanarchitecturex.extension.*
 
 @ExperimentalCoroutinesApi
@@ -54,11 +55,13 @@ class AsyncUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
         checkedObserver(mockObserver) {
             Assert.assertEquals(it.toState(), PENDING)
             Assert.assertEquals(it.isFinished(), false)
+            Assert.assertEquals(it.isLoading(), true)
         }
         Thread.sleep(200)
         checkedObserver(mockObserver) {
             Assert.assertEquals(it.toState(), RESOLVED)
             Assert.assertEquals(it.isFinished(), true)
+            Assert.assertEquals(it.isLoading(), false)
         }
     }
 
@@ -75,11 +78,13 @@ class AsyncUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
         checkedObserver(mockObserver) {
             Assert.assertEquals(it.toState(), PENDING)
             Assert.assertEquals(it.isFinished(), false)
+            Assert.assertEquals(it.isLoading(), true)
         }
         Thread.sleep(200)
         checkedObserver(mockObserver) {
             Assert.assertEquals(it.toState(), REJECTED)
             Assert.assertEquals(it.isFinished(), true)
+            Assert.assertEquals(it.isLoading(), false)
         }
     }
 

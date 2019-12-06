@@ -77,7 +77,7 @@ class UserRepositoryTest : AutoCloseKoinTest() {
     @Test
     fun addUser_success() = runBlocking {
         // mock api
-        val getUserUrlParam = Post<List<UserEntity>>(url = addUserUrl, body = UserEntity("user1"))
+        val getUserUrlParam = Post<List<UserEntity>>(url = addUserUrl, body = UserEntity("testName"))
         val getUserUrlResponse = ApiResult.Success(ResultEntity("true"))
         MockRestApi.response[getUserUrlParam] = getUserUrlResponse
         // verification
@@ -88,7 +88,7 @@ class UserRepositoryTest : AutoCloseKoinTest() {
     @Test
     fun addUser_failed() = runBlocking {
         // mock api
-        val getUserUrlParam = Post<List<UserEntity>>(url = addUserUrl, body = UserEntity("user1"))
+        val getUserUrlParam = Post<List<UserEntity>>(url = addUserUrl, body = UserEntity("testName"))
         val getUserUrlResponse = ApiResult.Failed<List<UserEntity>>(failedTestException, HttpStatusCode.INTERNAL_SERVER_ERROR.code)
         MockRestApi.response[getUserUrlParam] = getUserUrlResponse
         // verification

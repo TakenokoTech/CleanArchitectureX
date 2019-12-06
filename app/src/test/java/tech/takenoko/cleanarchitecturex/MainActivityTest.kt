@@ -20,6 +20,7 @@ import org.robolectric.Robolectric.buildActivity
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import tech.takenoko.cleanarchitecturex.usecase.LoadUserUsecase
+import tech.takenoko.cleanarchitecturex.usecase.RegisterUserUsecase
 import tech.takenoko.cleanarchitecturex.viewmodel.TopViewModel
 
 @Config(sdk = [Build.VERSION_CODES.P])
@@ -54,9 +55,14 @@ class MainActivityTest {
     private val mockModule: Module = module {
         factory { TopViewModel() }
         factory { MockLoadUserUsecase(ApplicationProvider.getApplicationContext(), mock { }) as LoadUserUsecase }
+        factory { MockRegisterUserUsecase(ApplicationProvider.getApplicationContext(), mock { }) as RegisterUserUsecase }
     }
 
-    inner class MockLoadUserUsecase(context: Context, scope: CoroutineScope) : LoadUserUsecase(context, scope) {
+    private inner class MockLoadUserUsecase(context: Context, scope: CoroutineScope) : LoadUserUsecase(context, scope) {
+        override fun execute(param: Unit) {}
+    }
+
+    private inner class MockRegisterUserUsecase(context: Context, scope: CoroutineScope) : RegisterUserUsecase(context, scope) {
         override fun execute(param: Unit) {}
     }
 }

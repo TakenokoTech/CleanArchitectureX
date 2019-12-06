@@ -10,6 +10,7 @@ import tech.takenoko.cleanarchitecturex.repository.local.UserLocalDataSource
 import tech.takenoko.cleanarchitecturex.repository.remote.UserRemoteDataSource
 import tech.takenoko.cleanarchitecturex.usecase.BackgroundUsecase
 import tech.takenoko.cleanarchitecturex.usecase.LoadUserUsecase
+import tech.takenoko.cleanarchitecturex.usecase.RegisterUserUsecase
 import tech.takenoko.cleanarchitecturex.viewmodel.TopViewModel
 
 private val appModule = module {
@@ -20,6 +21,7 @@ private val viewmodelModules = module {
 }
 
 private val usecaseModules = module {
+    factory { RegisterUserUsecase(androidContext() as Application, it.get<CoroutineScope>() as CoroutineScope) }
     factory { LoadUserUsecase(androidContext() as Application, it.get<CoroutineScope>() as CoroutineScope) }
     factory { BackgroundUsecase(androidContext() as Application, it.get<CoroutineScope>() as CoroutineScope) }
 }
