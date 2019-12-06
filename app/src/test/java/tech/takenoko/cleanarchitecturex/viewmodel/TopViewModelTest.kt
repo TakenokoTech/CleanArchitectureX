@@ -21,6 +21,7 @@ import tech.takenoko.cleanarchitecturex.entities.UsecaseResult
 import tech.takenoko.cleanarchitecturex.extension.checkedObserver
 import tech.takenoko.cleanarchitecturex.extension.mockObserver
 import tech.takenoko.cleanarchitecturex.usecase.LoadUserUsecase
+import tech.takenoko.cleanarchitecturex.usecase.RegisterUserUsecase
 
 @ExperimentalCoroutinesApi
 class TopViewModelTest : AutoCloseKoinTest(), LifecycleOwner {
@@ -30,6 +31,7 @@ class TopViewModelTest : AutoCloseKoinTest(), LifecycleOwner {
 
     private val mockObserverString = mockObserver<String>()
     private val mockObserverListString = mockObserver<List<String>>()
+    private val mockObserverIsLoading = mockObserver<Boolean>()
 
     @Before
     fun before() {
@@ -42,7 +44,7 @@ class TopViewModelTest : AutoCloseKoinTest(), LifecycleOwner {
     }
 
     @Test
-    fun pending() {
+    fun load_pending() {
         val topViewModel by inject<TopViewModel>()
         topViewModel.text1.observeForever(mockObserverString)
         topViewModel.list1.observeForever(mockObserverListString)
@@ -60,7 +62,7 @@ class TopViewModelTest : AutoCloseKoinTest(), LifecycleOwner {
     }
 
     @Test
-    fun success() {
+    fun load_success() {
         val topViewModel by inject<TopViewModel>()
         topViewModel.text1.observeForever(mockObserverString)
         topViewModel.list1.observeForever(mockObserverListString)
@@ -79,7 +81,7 @@ class TopViewModelTest : AutoCloseKoinTest(), LifecycleOwner {
     }
 
     @Test
-    fun failed() {
+    fun load_failed() {
         val topViewModel by inject<TopViewModel>()
         topViewModel.text1.observeForever(mockObserverString)
         topViewModel.list1.observeForever(mockObserverListString)
@@ -96,15 +98,74 @@ class TopViewModelTest : AutoCloseKoinTest(), LifecycleOwner {
         checkedObserver(mockObserverString) { Assert.assertEquals(it, "failed") }
     }
 
+    @Test
+    fun register_pending() {
+        val topViewModel by inject<TopViewModel>()
+        topViewModel.isLoading.observeForever(mockObserverIsLoading)
+
+        // Before
+        Assert.assertEquals(topViewModel.isLoading.value, null)
+
+        // Execute
+        registerUserUsecaseValue = UsecaseResult.Pending()
+        loadUserUsecaseValue = UsecaseResult.Pending()
+        topViewModel.register()
+
+        // After
+        checkedObserver(mockObserverIsLoading) { Assert.assertEquals(it, true) }
+    }
+
+    @Test
+    fun register_success() {
+        val topViewModel by inject<TopViewModel>()
+        topViewModel.isLoading.observeForever(mockObserverIsLoading)
+
+        // Before
+        Assert.assertEquals(topViewModel.isLoading.value, null)
+
+        // Execute
+        registerUserUsecaseValue = UsecaseResult.Resolved(Unit)
+        loadUserUsecaseValue = UsecaseResult.Resolved(listOf())
+        topViewModel.register()
+
+        // After
+        checkedObserver(mockObserverIsLoading) { Assert.assertEquals(it, false) }
+    }
+
+    @Test
+    fun register_failed() {
+        val topViewModel by inject<TopViewModel>()
+        topViewModel.isLoading.observeForever(mockObserverIsLoading)
+
+        // Before
+        Assert.assertEquals(topViewModel.isLoading.value, null)
+
+        // Execute
+        registerUserUsecaseValue = UsecaseResult.Rejected(Throwable("failed"))
+        loadUserUsecaseValue = UsecaseResult.Rejected(Throwable("failed"))
+        topViewModel.register()
+
+        // After
+        checkedObserver(mockObserverIsLoading) { Assert.assertEquals(it, false) }
+    }
+
     private val mockModule: Module = module {
         factory { TopViewModel() }
         factory { MockLoadUserUsecase(context, mock { }) as LoadUserUsecase }
+        factory { MockRegisterUserUsecase(context, mock { }) as RegisterUserUsecase }
     }
 
     lateinit var loadUserUsecaseValue: UsecaseResult<List<String>>
     private inner class MockLoadUserUsecase(context: Context, scope: CoroutineScope) : LoadUserUsecase(context, scope) {
         override fun execute(param: Unit) {
             result.postValue(loadUserUsecaseValue)
+        }
+    }
+
+    lateinit var registerUserUsecaseValue: UsecaseResult<Unit>
+    private inner class MockRegisterUserUsecase(context: Context, scope: CoroutineScope) : RegisterUserUsecase(context, scope) {
+        override fun execute(param: Unit) {
+            result.postValue(registerUserUsecaseValue)
         }
     }
 

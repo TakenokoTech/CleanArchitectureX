@@ -31,10 +31,10 @@ class UserRemoteDataSource : KoinComponent {
     }
 
     @WorkerThread
-    suspend fun postUser(): ResultEntity {
+    suspend fun postUser(user: UserEntity): ResultEntity {
         val param = Post<ResultEntity>(
             url = addUserUrl,
-            body = UserEntity("user1")
+            body = user
         )
         return when (val it = restApi.fetch(param)) {
             is ApiResult.Success -> it.value
