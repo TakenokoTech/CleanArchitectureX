@@ -24,7 +24,6 @@ class ApiParameterTest {
 
         val postRequest = spy<Request> { }
         val mockPost = MockPost(postRequest)
-        mockPost.call()
         Assert.assertEquals(mockPost.method, "POST")
         Assert.assertEquals(mockPost.url, "")
         Assert.assertEquals(mockPost.parameters, mapOf("key" to "value"))

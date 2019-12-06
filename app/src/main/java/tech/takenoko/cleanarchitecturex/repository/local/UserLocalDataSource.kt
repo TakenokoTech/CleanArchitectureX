@@ -1,5 +1,6 @@
 package tech.takenoko.cleanarchitecturex.repository.local
 
+import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import androidx.room.ColumnInfo
@@ -22,16 +23,19 @@ class UserLocalDataSource : UserDao, KoinComponent {
 
     @WorkerThread
     override suspend fun insertAll(vararg users: User) {
-        AppLog.debug(TAG, "${users.map { it.uid }}")
-        database.userDao().insertAll(*users)
+        val result = database.userDao().insertAll(*users)
+        AppLog.debug(TAG, "insertAll. ${users.map { it.uid }}")
+        return result
     }
 
     @WorkerThread
     override suspend fun deleteAll() {
-        database.userDao().deleteAll()
+        val result = database.userDao().deleteAll()
+        AppLog.debug(TAG, "deleteAll.")
+        return result
     }
 
-    @WorkerThread
+    @MainThread
     override fun getAllToLive(): LiveData<List<User>> {
         return database.userDao().getAllToLive()
     }
@@ -43,6 +47,6 @@ class UserLocalDataSource : UserDao, KoinComponent {
     )
 
     companion object {
-        val TAG = UserLocalDataSource::class.java.simpleName
+        private val TAG = UserLocalDataSource::class.java.simpleName
     }
 }

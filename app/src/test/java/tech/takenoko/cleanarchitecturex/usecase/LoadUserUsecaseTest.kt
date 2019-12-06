@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ServiceLifecycleDispatcher
+import com.nhaarman.mockitokotlin2.mock
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.TestCoroutineScope
 import org.junit.*
@@ -85,6 +87,7 @@ class LoadUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
         override suspend fun addUser(name: String) {
             AppLog.debug("MockUserRepository", name)
         }
+        override fun getAllToLive(): LiveData<List<UserLocalDataSource.User>> = mock {}
     }
 
     private val testScope = TestCoroutineScope()

@@ -1,7 +1,6 @@
-package tech.takenoko.cleanarchitecturex.repository.remote
+package tech.takenoko.cleanarchitecturex.di
 
 import kotlin.reflect.KClass
-import tech.takenoko.cleanarchitecturex.di.AppRestApi
 import tech.takenoko.cleanarchitecturex.entities.ApiParameter
 import tech.takenoko.cleanarchitecturex.entities.ApiResult
 

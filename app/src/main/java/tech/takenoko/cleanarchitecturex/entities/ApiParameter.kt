@@ -15,7 +15,7 @@ sealed class ApiParameter<T : Any>(
     open val body: Any?,
     open val adapter: Deserializable<T>?
 ) {
-    open val method: String = ""
+    abstract val method: String
     abstract val call: () -> Request
 
     open class GetParameter<T : Any>(

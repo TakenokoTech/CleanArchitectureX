@@ -1,6 +1,8 @@
 package tech.takenoko.cleanarchitecturex.repository
 
+import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
+import androidx.lifecycle.LiveData
 import java.util.UUID
 import org.koin.core.KoinComponent
 import org.koin.core.inject
@@ -37,6 +39,11 @@ class UserRepositoryImpl : UserRepository, KoinComponent {
                 name
             )
         )
+    }
+
+    @MainThread
+    override fun getAllToLive(): LiveData<List<UserLocalDataSource.User>> {
+        return local.getAllToLive()
     }
 
     companion object {
