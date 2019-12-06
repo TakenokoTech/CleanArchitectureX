@@ -1,6 +1,5 @@
-package tech.takenoko.cleanarchitecturex.repository.local
+package tech.takenoko.cleanarchitecturex.di
 
-import tech.takenoko.cleanarchitecturex.di.AppDatabase
 import tech.takenoko.cleanarchitecturex.entities.room.UserDao
 
 class MockDatabase : AppDatabase {

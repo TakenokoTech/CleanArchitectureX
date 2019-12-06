@@ -19,13 +19,13 @@ class MoshiTest {
     fun planeAdapter_pattern_success() {
         val str = "{\"param1\": \"value\"}"
 
-        val a2 = planeAdapter(A::class.java).deserialize(inputStream = mock { })
+        val a2 = planeAdapter<A>().deserialize(inputStream = mock { })
         Assert.assertEquals(a2?.param1, null)
 
-        val a3 = planeAdapter(A::class.java).deserialize(reader = mock { })
+        val a3 = planeAdapter<A>().deserialize(reader = mock { })
         Assert.assertEquals(a3?.param1, null)
 
-        val a4 = planeAdapter(A::class.java).deserialize(bytes = str.toByteArray())
+        val a4 = planeAdapter<A>().deserialize(bytes = str.toByteArray())
         Assert.assertEquals(a4?.param1, null)
     }
 

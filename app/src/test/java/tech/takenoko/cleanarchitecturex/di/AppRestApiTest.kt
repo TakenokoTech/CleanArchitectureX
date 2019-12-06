@@ -33,4 +33,10 @@ class AppRestApiTest : MockHttpTestCase() {
     class MockGet(private val request: Request) : ApiParameter.GetParameter<String>("", adapter = planeAdapter(String::class.java)) {
         override val call: () -> Request = { request }
     }
+
+    companion object {
+        val failedTestException = object : FailedTestException() {}
+    }
+
+    open class FailedTestException : Exception()
 }

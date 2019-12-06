@@ -8,14 +8,13 @@ import com.github.kittinunf.fuel.httpPost
 typealias Get<T> = ApiParameter.GetParameter<T>
 typealias Post<T> = ApiParameter.PostParameter<T>
 
-sealed class ApiParameter<T : Any>(
-    open val url: String,
-    open val parameters: Map<String, Any>,
-    open val header: Map<String, Any>,
-    open val body: Any?,
-    open val adapter: Deserializable<T>?
-) {
-    open val method: String = ""
+sealed class ApiParameter<T : Any> {
+    abstract val url: String
+    abstract val parameters: Map<String, Any>
+    abstract val header: Map<String, Any>
+    abstract val body: Any?
+    abstract val adapter: Deserializable<T>?
+    abstract val method: String
     abstract val call: () -> Request
 
     open class GetParameter<T : Any>(
@@ -23,8 +22,9 @@ sealed class ApiParameter<T : Any>(
         override val parameters: Map<String, Any> = mapOf(),
         override val header: Map<String, Any> = mapOf(),
         override val adapter: Deserializable<T>? = null
-    ) : ApiParameter<T>(url, parameters, header, null, adapter) {
+    ) : ApiParameter<T>() {
         override val method = "GET"
+        override val body: Any? = null
         override val call = { url.httpGet(parameters.map { it.key to it.value }) }
     }
 
@@ -34,7 +34,7 @@ sealed class ApiParameter<T : Any>(
         override val header: Map<String, Any> = mapOf(),
         override val body: Any? = null,
         override val adapter: Deserializable<T>? = null
-    ) : ApiParameter<T>(url, parameters, header, body, adapter) {
+    ) : ApiParameter<T>() {
         override val method = "POST"
         override val call = { url.httpPost(parameters.map { it.key to it.value }) }
     }

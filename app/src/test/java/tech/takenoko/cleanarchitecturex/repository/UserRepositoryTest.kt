@@ -1,11 +1,9 @@
 package tech.takenoko.cleanarchitecturex.repository
 
-import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineScope
 import org.junit.*
 import org.junit.rules.TestRule
 import org.koin.core.context.startKoin
@@ -14,28 +12,27 @@ import org.koin.core.inject
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.koin.test.AutoCloseKoinTest
-import org.mockito.Mockito
-import tech.takenoko.cleanarchitecturex.di.AppDatabase
-import tech.takenoko.cleanarchitecturex.di.AppRestApi
+import tech.takenoko.cleanarchitecturex.di.*
+import tech.takenoko.cleanarchitecturex.di.AppRestApiTest.Companion.failedTestException
 import tech.takenoko.cleanarchitecturex.entities.ApiResult
 import tech.takenoko.cleanarchitecturex.entities.Get
+import tech.takenoko.cleanarchitecturex.entities.HttpStatusCode
 import tech.takenoko.cleanarchitecturex.entities.Post
 import tech.takenoko.cleanarchitecturex.entities.response.ResultEntity
 import tech.takenoko.cleanarchitecturex.entities.response.UserEntity
 import tech.takenoko.cleanarchitecturex.entities.room.UserDao
-import tech.takenoko.cleanarchitecturex.repository.local.MockDatabase
+import tech.takenoko.cleanarchitecturex.extension.checkedObserver
+import tech.takenoko.cleanarchitecturex.extension.mockObserver
 import tech.takenoko.cleanarchitecturex.repository.local.UserLocalDataSource
-import tech.takenoko.cleanarchitecturex.repository.remote.MockRestApi
 import tech.takenoko.cleanarchitecturex.repository.remote.UserRemoteDataSource
 import tech.takenoko.cleanarchitecturex.repository.remote.UserRemoteDataSource.Companion.addUserUrl
 import tech.takenoko.cleanarchitecturex.repository.remote.UserRemoteDataSource.Companion.getUserUrl
 
 @ExperimentalCoroutinesApi
-class UserRepositoryTest : AutoCloseKoinTest(), LifecycleOwner {
+class UserRepositoryTest : AutoCloseKoinTest() {
+
     @get:Rule
     val rule: TestRule = InstantTaskExecutorRule()
-
-    // private val baseDataSource = mock(BaseDataSource::class.java)
 
     @Before
     fun before() {
@@ -50,7 +47,7 @@ class UserRepositoryTest : AutoCloseKoinTest(), LifecycleOwner {
     }
 
     @Test
-    fun getAllUser_success1() = runBlocking {
+    fun getAllUser_success() = runBlocking {
         // mock api
         val getUserUrlParam = Get<List<UserEntity>>(url = getUserUrl)
         val getUserUrlResponse = ApiResult.Success(listOf(UserEntity("testName")))
@@ -64,7 +61,21 @@ class UserRepositoryTest : AutoCloseKoinTest(), LifecycleOwner {
     }
 
     @Test
-    fun addUser_success1() = runBlocking {
+    fun getAllUser_failed() = runBlocking {
+        // mock api
+        val getUserParam = Get<List<UserEntity>>(url = getUserUrl)
+        val getUserResponse = ApiResult.Failed<List<UserEntity>>(failedTestException, HttpStatusCode.INTERNAL_SERVER_ERROR.code)
+        MockRestApi.response[getUserParam] = getUserResponse
+        // mock db
+        getAll = listOf(UserLocalDataSource.User("testName", "testName"))
+        // verification
+        val userRepository by inject<UserRepository>()
+        val result = runCatching { userRepository.getAllUser() }.exceptionOrNull()
+        Assert.assertEquals(result, failedTestException)
+    }
+
+    @Test
+    fun addUser_success() = runBlocking {
         // mock api
         val getUserUrlParam = Post<List<UserEntity>>(url = addUserUrl, body = UserEntity("user1"))
         val getUserUrlResponse = ApiResult.Success(ResultEntity("true"))
@@ -72,6 +83,36 @@ class UserRepositoryTest : AutoCloseKoinTest(), LifecycleOwner {
         // verification
         val userRepository by inject<UserRepository>()
         userRepository.addUser("testName")
+    }
+
+    @Test
+    fun addUser_failed() = runBlocking {
+        // mock api
+        val getUserUrlParam = Post<List<UserEntity>>(url = addUserUrl, body = UserEntity("user1"))
+        val getUserUrlResponse = ApiResult.Failed<List<UserEntity>>(failedTestException, HttpStatusCode.INTERNAL_SERVER_ERROR.code)
+        MockRestApi.response[getUserUrlParam] = getUserUrlResponse
+        // verification
+        val userRepository by inject<UserRepository>()
+        val result = runCatching { userRepository.addUser("testName") }.exceptionOrNull()
+        Assert.assertEquals(result, failedTestException)
+    }
+
+    @Test
+    fun getAllToLive_success() {
+        val mockObserver = mockObserver<List<UserLocalDataSource.User>>()
+        val userRepository by inject<UserRepository>()
+        userRepository.getAllToLive().observeForever(mockObserver)
+        val testUser = UserLocalDataSource.User("testUid1", "testName1")
+        // Before
+        getAllToLive.postValue(listOf(testUser))
+        checkedObserver(mockObserver) {
+            Assert.assertEquals(it, listOf(testUser))
+        }
+        // After
+        getAllToLive.postValue(listOf(testUser, testUser))
+        checkedObserver(mockObserver) {
+            Assert.assertEquals(it, listOf(testUser, testUser))
+        }
     }
 
     private val mockModule: Module = module {
@@ -82,16 +123,13 @@ class UserRepositoryTest : AutoCloseKoinTest(), LifecycleOwner {
         factory { MockDatabase() as AppDatabase }
     }
 
-    var getAll = listOf<UserLocalDataSource.User>()
+    var getAll: List<UserLocalDataSource.User>? = null
+    val getAllToLive = MediatorLiveData<List<UserLocalDataSource.User>>()
 
     private val userDao = object : UserDao {
         override suspend fun insertAll(vararg users: UserLocalDataSource.User) {}
-        override suspend fun getAll(): List<UserLocalDataSource.User> = getAll
+        override suspend fun getAll(): List<UserLocalDataSource.User> = getAll!!
         override suspend fun deleteAll() {}
-        override fun getAllToLive(): LiveData<List<UserLocalDataSource.User>> = MediatorLiveData()
+        override fun getAllToLive(): LiveData<List<UserLocalDataSource.User>> = getAllToLive
     }
-
-    private val testScope = TestCoroutineScope()
-    private val context: Context = Mockito.mock(Context::class.java)
-    override fun getLifecycle(): Lifecycle = ServiceLifecycleDispatcher(this).lifecycle
 }

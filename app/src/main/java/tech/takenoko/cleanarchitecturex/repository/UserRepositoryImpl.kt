@@ -1,6 +1,8 @@
 package tech.takenoko.cleanarchitecturex.repository
 
+import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
+import androidx.lifecycle.LiveData
 import java.util.UUID
 import org.koin.core.KoinComponent
 import org.koin.core.inject
@@ -30,13 +32,19 @@ class UserRepositoryImpl : UserRepository, KoinComponent {
     @WorkerThread
     override suspend fun addUser(name: String) {
         AppLog.info(TAG, "addUser")
-        network.postUser()
+        val result = network.postUser()
+        AppLog.info(TAG, "postUser ==> $result")
         return local.insertAll(
             UserLocalDataSource.User(
                 UUID.randomUUID().toString(),
                 name
             )
         )
+    }
+
+    @MainThread
+    override fun getAllToLive(): LiveData<List<UserLocalDataSource.User>> {
+        return local.getAllToLive()
     }
 
     companion object {
