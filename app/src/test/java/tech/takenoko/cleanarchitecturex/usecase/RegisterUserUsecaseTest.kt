@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ServiceLifecycleDispatcher
 import com.nhaarman.mockitokotlin2.mock
 import kotlinx.coroutines.*
@@ -20,9 +19,8 @@ import org.koin.test.AutoCloseKoinTest
 import org.mockito.Mockito.*
 import tech.takenoko.cleanarchitecturex.entities.UsecaseResult
 import tech.takenoko.cleanarchitecturex.extension.*
+import tech.takenoko.cleanarchitecturex.repository.MockUserRepository
 import tech.takenoko.cleanarchitecturex.repository.UserRepository
-import tech.takenoko.cleanarchitecturex.repository.local.UserLocalDataSource
-import tech.takenoko.cleanarchitecturex.utils.AppLog
 
 @ExperimentalCoroutinesApi
 class RegisterUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
@@ -61,15 +59,6 @@ class RegisterUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
     private val mockModule: Module = module {
         factory { RegisterUserUsecase(context, testScope) }
         factory { MockUserRepository() as UserRepository }
-    }
-
-    var allUser = listOf<UserLocalDataSource.User>()
-    inner class MockUserRepository : UserRepository {
-        override suspend fun getAllUser(): List<UserLocalDataSource.User> = allUser
-        override suspend fun addUser(name: String) {
-            AppLog.debug("MockUserRepository", name)
-        }
-        override fun getAllToLive(): LiveData<List<UserLocalDataSource.User>> = mock {}
     }
 
     private val testScope = TestCoroutineScope()
