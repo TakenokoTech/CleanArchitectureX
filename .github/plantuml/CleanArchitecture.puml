@@ -1,20 +1,19 @@
 @startuml
 
 package "UI + Application Layer" <<Rectangle>> {
-    class JobService {
-        + onStartJob()
-        + onStopJob()
-        + {static} schedule()
-    }
-    class MainActivity {
-        + onCreate()
-    }
     class TopFragment {
         + onCreateView()
         + onCreate()
         + onResume()
     }
-    abstract ViewModel
+    class JobService {
+        + onStartJob()
+        + onStopJob()
+        + {static} schedule()
+    }
+    abstract ViewModel {
+        + viewModelScope: CoroutineScope
+    }
     class TopViewModel {
         + load()
         + register()
@@ -22,68 +21,98 @@ package "UI + Application Layer" <<Rectangle>> {
 }
 
 package "Domain Layer" <<Rectangle>> {
-    abstract Usecase
-    class LoadUsecase
+    abstract Usecase {
+        # result: MediatorLiveData<UsecaseResult<Any>>
+        + source: LiveData<UsecaseResult<Any>>
+        + execute(param: Any)
+    }
+    class LoadUserUsecase {
+        # call(param: Any): Deferred<Any>
+    }
+    class RegisterUserUsecase {
+        # call(param: Any): Deferred<Any>
+    }
+    class BackgroundUsecase {
+        # call(param: Any): Deferred<Any>
+    }
 }
 
 package "Infrastructure Layer" <<Rectangle>> {
-    interface UserRepository
-    class UserRepositoryImpl << (O,#FF7700) Singleton >>
-    class UserLocalDataSource << (O,#FF7700) Singleton >>
-    class UserRemoteDataSource << (O,#FF7700) Singleton >>
+    interface UserRepository {
+        + getAllUser()
+        + addUser()
+    }
+    class UserRepositoryImpl << (O,#FF7700) Singleton >> {
+        # getAllUser()
+        # addUser()
+    }
+    class UserLocalDataSource << (O,#FF7700) Singleton >> {
+        + getAll()
+        + insertAll()
+        + deleteAll()
+    }
+    class UserRemoteDataSource << (O,#FF7700) Singleton >> {
+        + getUser()
+        + postUser(UserEntity)
+    }
+    class AppDatabase << (O,#FF7700) Singleton >> {
+        ~ {static} getDatabase()
+    }
+    class AppRestApi << (O,#FF7700) Singleton >> {
+        ~ fetch(): ApiParameter<*>
+    }
 }
 
 package "Entity Layer" <<Rectangle>> {
-    enum UsecaseResult
-    enum ApiResult
-    enum ApiParameter
+    enum UsecaseResult {
+        Pending
+        Resolved
+        Rejected
+        + isFinished()
+        + isLoading()
+    }
+    enum ApiResult {
+        Success
+        Failed
+    }
+    enum ApiParameter {
+        GetParameter
+        PostParameter
+        + call(url, body, header)
+     }
+    interface UserDao {
+        + getAll()
+        + insertAll()
+        + deleteAll()
+    }
 }
 
-abstract Usecase {
-    # result: MediatorLiveData<UsecaseResult<Any>>
-    + source: LiveData<UsecaseResult<Any>>
-    + execute(param: Any)
-}
-class LoadUsecase {
-    # call(param: Any): Deferred<Any>
-}
+TopFragment -ri-> TopViewModel
+TopViewModel -do-|> ViewModel
 
-class AppDatabase << (O,#FF7700) Singleton >>
-class AppRestApi << (O,#FF7700) Singleton >>
+JobService -ri-> BackgroundUsecase
+TopViewModel -ri-> LoadUserUsecase
+TopViewModel -ri-> RegisterUserUsecase
 
-MainActivity o-ri- TopFragment
-TopViewModel -le-> TopFragment
+LoadUserUsecase ---do-|> Usecase
+RegisterUserUsecase --do-|> Usecase
+BackgroundUsecase -do-|> Usecase
+
+LoadUserUsecase -ri-> UserRepository
+RegisterUserUsecase -ri-> UserRepository
 
 Usecase -do- UsecaseResult
-TopViewModel --|> ViewModel
+UserRepository <|.. UserRepositoryImpl
 
-JobService <-ri- Usecase
-TopViewModel <-ri- Usecase
+UserRepositoryImpl o-do- UserLocalDataSource : aggregation
+UserLocalDataSource -do-> AppDatabase
+AppDatabase o-do- UserDao : aggregation
 
-Usecase -do-|> LoadUsecase
-LoadUsecase <-ri- UserRepository
+UserRepositoryImpl o-do- UserRemoteDataSource : aggregation
+UserRemoteDataSource -do-> AppRestApi
+AppRestApi -- ApiParameter
+AppRestApi -- ApiResult
 
-UserRepository <|-do- UserRepositoryImpl
-UserRepositoryImpl o-ri- UserLocalDataSource : 集約
-UserRepositoryImpl o-ri- UserRemoteDataSource : 集約
-
-enum UsecaseResult {
-    Pending
-    Resolved
-    Rejected
-    isFinished()
-    isLoading()
-}
-
-enum ApiResult {
-    Success
-    Failed
-}
-
-enum ApiParameter {
-    GetParameter
-    PostParameter
-}
 
 'Foo -up-> 上
 'Foo -do-> 下

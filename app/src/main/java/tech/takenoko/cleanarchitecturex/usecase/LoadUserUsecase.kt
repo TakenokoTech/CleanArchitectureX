@@ -15,7 +15,7 @@ open class LoadUserUsecase(context: Context, private val scope: CoroutineScope) 
     private val userRepository: UserRepository by inject()
 
     @WorkerThread
-    public override suspend fun callAsync(param: Unit): Deferred<List<String>> = scope.async(Dispatchers.IO) {
+    override suspend fun callAsync(param: Unit): Deferred<List<String>> = scope.async(Dispatchers.IO) {
         AppLog.info(TAG, "callAsync")
         Thread.sleep(1000)
         return@async userRepository.getAllUser().mapNotNull { it.name }

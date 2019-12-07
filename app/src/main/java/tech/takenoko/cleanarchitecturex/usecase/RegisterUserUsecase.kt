@@ -16,8 +16,7 @@ open class RegisterUserUsecase(context: Context, private val scope: CoroutineSco
     private val userRepository: UserRepository by inject()
 
     @WorkerThread
-    public override suspend fun callAsync(param: Unit): Deferred<Unit> = scope.async(
-        Dispatchers.IO) {
+    override suspend fun callAsync(param: Unit): Deferred<Unit> = scope.async(Dispatchers.IO) {
         AppLog.info(TAG, "callAsync")
         Thread.sleep(1000)
         return@async userRepository.addUser("user")
