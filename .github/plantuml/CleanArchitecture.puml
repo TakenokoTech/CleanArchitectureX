@@ -1,0 +1,93 @@
+@startuml
+
+package "UI + Application Layer" <<Rectangle>> {
+    class JobService {
+        + onStartJob()
+        + onStopJob()
+        + {static} schedule()
+    }
+    class MainActivity {
+        + onCreate()
+    }
+    class TopFragment {
+        + onCreateView()
+        + onCreate()
+        + onResume()
+    }
+    abstract ViewModel
+    class TopViewModel {
+        + load()
+        + register()
+    }
+}
+
+package "Domain Layer" <<Rectangle>> {
+    abstract Usecase
+    class LoadUsecase
+}
+
+package "Infrastructure Layer" <<Rectangle>> {
+    interface UserRepository
+    class UserRepositoryImpl << (O,#FF7700) Singleton >>
+    class UserLocalDataSource << (O,#FF7700) Singleton >>
+    class UserRemoteDataSource << (O,#FF7700) Singleton >>
+}
+
+package "Entity Layer" <<Rectangle>> {
+    enum UsecaseResult
+    enum ApiResult
+    enum ApiParameter
+}
+
+abstract Usecase {
+    # result: MediatorLiveData<UsecaseResult<Any>>
+    + source: LiveData<UsecaseResult<Any>>
+    + execute(param: Any)
+}
+class LoadUsecase {
+    # call(param: Any): Deferred<Any>
+}
+
+class AppDatabase << (O,#FF7700) Singleton >>
+class AppRestApi << (O,#FF7700) Singleton >>
+
+MainActivity o-ri- TopFragment
+TopViewModel -le-> TopFragment
+
+Usecase -do- UsecaseResult
+TopViewModel --|> ViewModel
+
+JobService <-ri- Usecase
+TopViewModel <-ri- Usecase
+
+Usecase -do-|> LoadUsecase
+LoadUsecase <-ri- UserRepository
+
+UserRepository <|-do- UserRepositoryImpl
+UserRepositoryImpl o-ri- UserLocalDataSource : 集約
+UserRepositoryImpl o-ri- UserRemoteDataSource : 集約
+
+enum UsecaseResult {
+    Pending
+    Resolved
+    Rejected
+    isFinished()
+    isLoading()
+}
+
+enum ApiResult {
+    Success
+    Failed
+}
+
+enum ApiParameter {
+    GetParameter
+    PostParameter
+}
+
+'Foo -up-> 上
+'Foo -do-> 下
+'Foo -le-> 左
+'Foo -ri-> 右
+
+@enduml
