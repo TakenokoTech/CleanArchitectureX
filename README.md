@@ -7,5 +7,4 @@
 
 Android Clean Architecture
 
-## UML
 <img src=".github/plantuml/CleanArchitecture.png" />
