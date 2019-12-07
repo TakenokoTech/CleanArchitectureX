@@ -15,51 +15,55 @@ package "UI + Application Layer" <<Rectangle>> {
         + viewModelScope: CoroutineScope
     }
     class TopViewModel {
+        + userList: LiveData<List<User>>
+        + isLoading: LiveData<Boolean>
+        - _userList: MediatorLiveData<List<User>>
+        - _isLoading: MediatorLiveData<Boolean>
         + load()
-        + register()
+        + register(User)
     }
 }
 
 package "Domain Layer" <<Rectangle>> {
     abstract Usecase {
-        # result: MediatorLiveData<UsecaseResult<Any>>
-        + source: LiveData<UsecaseResult<Any>>
-        + execute(param: Any)
+        # result: MediatorLiveData<UsecaseResult<*>>
+        + source: LiveData<UsecaseResult<*>>
+        + execute(param: *)
     }
     class LoadUserUsecase {
-        # call(param: Any): Deferred<Any>
+        # call(param: Unit): Deferred<List<User>>
     }
     class RegisterUserUsecase {
-        # call(param: Any): Deferred<Any>
+        # call(param: User): Deferred<Unit>
     }
     class BackgroundUsecase {
-        # call(param: Any): Deferred<Any>
+        # call(param: Unit): Deferred<Unit>
     }
 }
 
 package "Infrastructure Layer" <<Rectangle>> {
     interface UserRepository {
-        + getAllUser()
-        + addUser()
+        + getAllUser(): List<User>
+        + addUser(User)
     }
     class UserRepositoryImpl << (O,#FF7700) Singleton >> {
-        # getAllUser()
-        # addUser()
+        # getAllUser(): List<User>
+        # addUser(User)
     }
     class UserLocalDataSource << (O,#FF7700) Singleton >> {
-        + getAll()
-        + insertAll()
+        + getAll(): List<User>
+        + insertAll(List<User>)
         + deleteAll()
     }
     class UserRemoteDataSource << (O,#FF7700) Singleton >> {
-        + getUser()
-        + postUser(UserEntity)
+        + getUser(): List<User>
+        + postUser(User)
     }
     class AppDatabase << (O,#FF7700) Singleton >> {
         ~ {static} getDatabase()
     }
     class AppRestApi << (O,#FF7700) Singleton >> {
-        ~ fetch(): ApiParameter<*>
+        ~ fetch(ApiParameter): ApiResult<*>
     }
 }
 

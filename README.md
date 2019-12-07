@@ -6,3 +6,6 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/takenokotech/cleanarchitecturex/badge)](https://www.codefactor.io/repository/github/takenokotech/cleanarchitecturex)
 
 Android Clean Architecture
+
+## UML
+<img src=".github/plantuml/CleanArchitecture.png" />
