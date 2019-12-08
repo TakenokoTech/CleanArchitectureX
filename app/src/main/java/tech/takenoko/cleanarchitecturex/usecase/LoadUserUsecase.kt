@@ -18,7 +18,7 @@ open class LoadUserUsecase(context: Context, private val scope: CoroutineScope) 
     override suspend fun callAsync(param: Unit): Deferred<List<String>> = scope.async(Dispatchers.IO) {
         AppLog.info(TAG, "callAsync")
         Thread.sleep(1000)
-        return@async userRepository.getAllUser().mapNotNull { it.name }
+        return@async userRepository.getAllUser().map { "${it.id}: ${it.displayName}" }
     }
 
     companion object {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -19,6 +20,7 @@ import tech.takenoko.cleanarchitecturex.viewmodel.TopViewModel
 class TopFragment : Fragment() {
 
     private val viewModel: TopViewModel by inject()
+    private var alertDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AppLog.info(TAG, "onCreate")
@@ -40,6 +42,7 @@ class TopFragment : Fragment() {
         AppLog.info(TAG, "onResume")
         super.onResume()
         setupRecyclerView()
+        setupErrorDialog()
     }
 
     private fun setupRecyclerView() {
@@ -47,7 +50,18 @@ class TopFragment : Fragment() {
         recycler.layoutManager = LinearLayoutManager(context)
         recycler.adapter = adapter
         recycler.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager(activity).orientation))
-        viewModel.list1.observe(this, Observer { list -> adapter.setItem(list) })
+        viewModel.userNameList.observe(this, Observer { list -> adapter.setItem(list) })
+    }
+
+    private fun setupErrorDialog() {
+        viewModel.errorMessage.observe(this, Observer {
+            if (alertDialog?.isShowing == true || it == null) return@Observer
+            this.alertDialog = AlertDialog.Builder(requireContext())
+                .setTitle("Error")
+                .setMessage(it)
+                .setPositiveButton("close") { _, _ -> viewModel.resetErrorMessage() }
+                .show()
+        })
     }
 
     companion object {

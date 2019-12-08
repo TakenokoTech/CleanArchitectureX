@@ -50,7 +50,7 @@ class UserRepositoryTest : AutoCloseKoinTest() {
     fun getAllUser_success() = runBlocking {
         // mock api
         val getUserUrlParam = Get<List<UserEntity>>(url = getUserUrl)
-        val getUserUrlResponse = ApiResult.Success(listOf(UserEntity("testName")))
+        val getUserUrlResponse = ApiResult.Success(listOf(UserEntity("testUser", "testDisplay")))
         MockRestApi.response[getUserUrlParam] = getUserUrlResponse
         // mock db
         getAll = listOf(UserLocalDataSource.User("testName", "testName"))
@@ -77,23 +77,23 @@ class UserRepositoryTest : AutoCloseKoinTest() {
     @Test
     fun addUser_success() = runBlocking {
         // mock api
-        val getUserUrlParam = Post<List<UserEntity>>(url = addUserUrl, body = UserEntity("testName"))
+        val getUserUrlParam = Post<List<UserEntity>>(url = addUserUrl, body = UserEntity("testUser", "testDisplay"))
         val getUserUrlResponse = ApiResult.Success(ResultEntity("true"))
         MockRestApi.response[getUserUrlParam] = getUserUrlResponse
         // verification
         val userRepository by inject<UserRepository>()
-        userRepository.addUser("testName")
+        userRepository.addUser(UserLocalDataSource.User("testUser", "testDisplay"))
     }
 
     @Test
     fun addUser_failed() = runBlocking {
         // mock api
-        val getUserUrlParam = Post<List<UserEntity>>(url = addUserUrl, body = UserEntity("testName"))
+        val getUserUrlParam = Post<List<UserEntity>>(url = addUserUrl, body = UserEntity("testUser", "testDisplay"))
         val getUserUrlResponse = ApiResult.Failed<List<UserEntity>>(failedTestException, HttpStatusCode.INTERNAL_SERVER_ERROR.code)
         MockRestApi.response[getUserUrlParam] = getUserUrlResponse
         // verification
         val userRepository by inject<UserRepository>()
-        val result = runCatching { userRepository.addUser("testName") }.exceptionOrNull()
+        val result = runCatching { userRepository.addUser(UserLocalDataSource.User("testUser", "testDisplay")) }.exceptionOrNull()
         Assert.assertEquals(result, failedTestException)
     }
 
@@ -102,7 +102,7 @@ class UserRepositoryTest : AutoCloseKoinTest() {
         val mockObserver = mockObserver<List<UserLocalDataSource.User>>()
         val userRepository by inject<UserRepository>()
         userRepository.getAllToLive().observeForever(mockObserver)
-        val testUser = UserLocalDataSource.User("testUid1", "testName1")
+        val testUser = UserLocalDataSource.User("testUser", "testDisplay")
         // Before
         getAllToLive.postValue(listOf(testUser))
         checkedObserver(mockObserver) {

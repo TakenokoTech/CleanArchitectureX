@@ -21,6 +21,7 @@ import tech.takenoko.cleanarchitecturex.entities.UsecaseResult
 import tech.takenoko.cleanarchitecturex.extension.*
 import tech.takenoko.cleanarchitecturex.repository.MockUserRepository
 import tech.takenoko.cleanarchitecturex.repository.UserRepository
+import tech.takenoko.cleanarchitecturex.repository.local.UserLocalDataSource
 
 @ExperimentalCoroutinesApi
 class RegisterUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
@@ -42,9 +43,9 @@ class RegisterUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
 
     @Test(timeout = 2000)
     fun callAsync_success() {
-        val loadUserUsecase by inject<RegisterUserUsecase>()
-        loadUserUsecase.source.observeForever(mockObserver)
-        loadUserUsecase.execute(Unit)
+        val registerUserUsecase by inject<RegisterUserUsecase>()
+        registerUserUsecase.source.observeForever(mockObserver)
+        registerUserUsecase.execute(RegisterUserUsecase.Param(UserLocalDataSource.User("testUser", "testDisplay")))
         checkedObserver(mockObserver) {
             Assert.assertEquals(it.toState(), PENDING)
         }

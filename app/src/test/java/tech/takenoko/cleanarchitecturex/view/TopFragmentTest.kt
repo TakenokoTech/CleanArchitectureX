@@ -62,7 +62,7 @@ class TopFragmentTest {
     }
 
     private inner class MockRegisterUserUsecase(context: Context, scope: CoroutineScope) : RegisterUserUsecase(context, scope) {
-        override fun execute(param: Unit) {}
+        override fun execute(param: Param) {}
     }
 
     class TestActivity : Activity()

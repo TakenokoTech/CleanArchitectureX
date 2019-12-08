@@ -24,7 +24,7 @@ class UserLocalDataSource : UserDao, KoinComponent {
     @WorkerThread
     override suspend fun insertAll(vararg users: User) {
         val result = database.userDao().insertAll(*users)
-        AppLog.debug(TAG, "insertAll. ${users.map { it.uid }}")
+        AppLog.debug(TAG, "insertAll. ${users.map { it.id }}")
         return result
     }
 
@@ -42,8 +42,9 @@ class UserLocalDataSource : UserDao, KoinComponent {
 
     @Entity
     data class User(
-        @PrimaryKey val uid: String,
-        @ColumnInfo(name = "name") val name: String?
+        @ColumnInfo(name = "userName") val userName: String,
+        @ColumnInfo(name = "displayName") val displayName: String,
+        @PrimaryKey(autoGenerate = true) val id: Int = 0
     )
 
     companion object {

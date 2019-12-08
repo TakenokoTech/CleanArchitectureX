@@ -2,6 +2,7 @@ package tech.takenoko.cleanarchitecturex.di
 
 import androidx.annotation.WorkerThread
 import com.github.kittinunf.fuel.core.Response
+import com.github.kittinunf.fuel.core.extensions.jsonBody
 import com.github.kittinunf.fuel.coroutines.awaitResponseResult
 import com.github.kittinunf.result.Result
 import java.lang.Exception
@@ -31,7 +32,7 @@ class AppRestApiImpl : AppRestApi {
         val bodyStr =
             if (param.body != null) OBJECT_MAPPER.adapter(Any::class.java).toJson(param.body) else ""
 
-        val requestBuilder = param.call().header(param.header).body(bodyStr)
+        val requestBuilder = param.call().header(param.header).jsonBody(bodyStr)
         val adapter = param.adapter ?: planeAdapter(clazz.java)
 
         val (request, response, result) = runCatching {

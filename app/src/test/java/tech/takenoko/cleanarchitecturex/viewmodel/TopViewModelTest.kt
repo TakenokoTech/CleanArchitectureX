@@ -29,13 +29,14 @@ class TopViewModelTest : AutoCloseKoinTest(), LifecycleOwner {
     @get:Rule
     val rule: TestRule = InstantTaskExecutorRule()
 
-    private val mockObserverString = mockObserver<String>()
     private val mockObserverListString = mockObserver<List<String>>()
     private val mockObserverIsLoading = mockObserver<Boolean>()
+    private val mockObserverErrorMessage = mockObserver<String?>()
 
     @Before
     fun before() {
         startKoin { modules(mockModule) }
+        TopViewModel().resetErrorMessage()
     }
 
     @After
@@ -46,56 +47,55 @@ class TopViewModelTest : AutoCloseKoinTest(), LifecycleOwner {
     @Test
     fun load_pending() {
         val topViewModel by inject<TopViewModel>()
-        topViewModel.text1.observeForever(mockObserverString)
-        topViewModel.list1.observeForever(mockObserverListString)
+        topViewModel.userNameList.observeForever(mockObserverListString)
+        topViewModel.isLoading.observeForever(mockObserverIsLoading)
 
         // Before
-        Assert.assertEquals(topViewModel.text1.value, null)
-        Assert.assertEquals(topViewModel.list1.value, null)
+        Assert.assertEquals(topViewModel.userNameList.value, null)
 
         // Execute
         loadUserUsecaseValue = UsecaseResult.Pending()
         topViewModel.load()
 
         // After
-        checkedObserver(mockObserverString) { Assert.assertEquals(it, "loading...") }
+        checkedObserver(mockObserverIsLoading) { Assert.assertEquals(it, true) }
     }
 
     @Test
     fun load_success() {
         val topViewModel by inject<TopViewModel>()
-        topViewModel.text1.observeForever(mockObserverString)
-        topViewModel.list1.observeForever(mockObserverListString)
+        topViewModel.userNameList.observeForever(mockObserverListString)
+        topViewModel.isLoading.observeForever(mockObserverIsLoading)
 
         // Before
-        Assert.assertEquals(topViewModel.text1.value, null)
-        Assert.assertEquals(topViewModel.list1.value, null)
+        Assert.assertEquals(topViewModel.userNameList.value, null)
 
         // Execute
         loadUserUsecaseValue = UsecaseResult.Resolved(listOf("test"))
         topViewModel.load()
 
         // After
-        checkedObserver(mockObserverString) { Assert.assertEquals(it, "success!") }
         checkedObserver(mockObserverListString) { Assert.assertEquals(it, listOf("test")) }
+        checkedObserver(mockObserverIsLoading) { Assert.assertEquals(it, false) }
     }
 
     @Test
     fun load_failed() {
         val topViewModel by inject<TopViewModel>()
-        topViewModel.text1.observeForever(mockObserverString)
-        topViewModel.list1.observeForever(mockObserverListString)
+        topViewModel.userNameList.observeForever(mockObserverListString)
+        topViewModel.isLoading.observeForever(mockObserverIsLoading)
+        topViewModel.errorMessage.observeForever(mockObserverErrorMessage)
 
         // Before
-        Assert.assertEquals(topViewModel.text1.value, null)
-        Assert.assertEquals(topViewModel.list1.value, null)
+        Assert.assertEquals(topViewModel.userNameList.value, null)
 
         // Execute
         loadUserUsecaseValue = UsecaseResult.Rejected(Throwable("failed"))
         topViewModel.load()
 
         // After
-        checkedObserver(mockObserverString) { Assert.assertEquals(it, "failed") }
+        checkedObserver(mockObserverErrorMessage) { Assert.assertEquals(it, "failed") }
+        checkedObserver(mockObserverIsLoading) { Assert.assertEquals(it, false) }
     }
 
     @Test
@@ -164,7 +164,7 @@ class TopViewModelTest : AutoCloseKoinTest(), LifecycleOwner {
 
     lateinit var registerUserUsecaseValue: UsecaseResult<Unit>
     private inner class MockRegisterUserUsecase(context: Context, scope: CoroutineScope) : RegisterUserUsecase(context, scope) {
-        override fun execute(param: Unit) {
+        override fun execute(param: Param) {
             result.postValue(registerUserUsecaseValue)
         }
     }

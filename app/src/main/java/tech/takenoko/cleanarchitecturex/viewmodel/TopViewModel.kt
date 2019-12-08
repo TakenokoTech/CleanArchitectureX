@@ -2,33 +2,36 @@ package tech.takenoko.cleanarchitecturex.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import java.util.*
+import org.koin.core.KoinComponent
 import org.koin.core.inject
 import org.koin.core.parameter.parametersOf
 import tech.takenoko.cleanarchitecturex.entities.UsecaseResult
 import tech.takenoko.cleanarchitecturex.entities.isLoading
+import tech.takenoko.cleanarchitecturex.repository.local.UserLocalDataSource
 import tech.takenoko.cleanarchitecturex.usecase.LoadUserUsecase
 import tech.takenoko.cleanarchitecturex.usecase.RegisterUserUsecase
 import tech.takenoko.cleanarchitecturex.utils.AppLog
 
-class TopViewModel : BaseViewModel() {
+class TopViewModel : ViewModel(), KoinComponent {
 
     private val registerUserUsecase: RegisterUserUsecase by inject { parametersOf(viewModelScope) }
     private val loadUserUsecase: LoadUserUsecase by inject { parametersOf(viewModelScope) }
 
-    private val _text1: MediatorLiveData<String> = MediatorLiveData()
-    val text1: LiveData<String> = _text1
-
-    private val _list1: MediatorLiveData<List<String>> = MediatorLiveData()
-    val list1: LiveData<List<String>> = _list1
+    private val _userNameList: MediatorLiveData<List<String>> = MediatorLiveData()
+    val userNameList: LiveData<List<String>> = _userNameList
 
     private val _isLoading: MediatorLiveData<Boolean> = MediatorLiveData()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    init {
-        _text1.addSource(loadUserUsecase.source) { loadUserUsecaseHandlerToText(it) }
-        _list1.addSource(loadUserUsecase.source) { loadUserUsecaseHandlerToList(it) }
+    private val _errorMessage: MediatorLiveData<String?> = MediatorLiveData()
+    val errorMessage: LiveData<String?> = _errorMessage
+    fun resetErrorMessage() { _errorMessage.value = null }
 
+    init {
+        _userNameList.addSource(loadUserUsecase.source) { loadUserUsecaseHandlerToList(it) }
         _isLoading.addSource(loadUserUsecase.source) { usecaseHandlerIsLoading() }
         _isLoading.addSource(registerUserUsecase.source) { usecaseHandlerIsLoading().run { registerUserUsecaseHandler(it) } }
     }
@@ -40,25 +43,21 @@ class TopViewModel : BaseViewModel() {
 
     fun register() {
         AppLog.info(TAG, "register")
-        registerUserUsecase.execute(Unit)
+        val user = UserLocalDataSource.User("UserName", "DisplayName")
+        val param = RegisterUserUsecase.Param(user)
+        registerUserUsecase.execute(param)
     }
 
-    private fun loadUserUsecaseHandlerToText(result: UsecaseResult<List<String>>): Unit = when (result) {
-        is UsecaseResult.Pending -> _text1.value = "loading..."
-        is UsecaseResult.Resolved -> _text1.value = "success!"
-        is UsecaseResult.Rejected -> _text1.value = result.reason.message
-    }
-
-    private fun loadUserUsecaseHandlerToList(result: UsecaseResult<List<String>>): Unit = when (result) {
+    private fun loadUserUsecaseHandlerToList(result: UsecaseResult<List<String>>): Any = when (result) {
         is UsecaseResult.Pending -> Unit
-        is UsecaseResult.Resolved -> _list1.value = result.value
-        is UsecaseResult.Rejected -> Unit
+        is UsecaseResult.Resolved -> _userNameList.value = result.value
+        is UsecaseResult.Rejected -> _errorMessage.value = result.reason.localizedMessage
     }
 
-    private fun registerUserUsecaseHandler(result: UsecaseResult<Unit>): Unit = when (result) {
+    private fun registerUserUsecaseHandler(result: UsecaseResult<Unit>): Any = when (result) {
         is UsecaseResult.Pending -> Unit
         is UsecaseResult.Resolved -> load()
-        is UsecaseResult.Rejected -> Unit
+        is UsecaseResult.Rejected -> _errorMessage.value = result.reason.localizedMessage
     }
 
     private fun usecaseHandlerIsLoading() {
