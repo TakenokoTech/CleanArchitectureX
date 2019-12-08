@@ -22,10 +22,10 @@ interface AppRestApi {
 suspend inline fun <reified T : Any> AppRestApi.fetch(param: ApiParameter<T>) = execute(param, T::class)
 
 @Suppress("OVERRIDE_BY_INLINE")
-open class AppRestApiImpl : AppRestApi {
+class AppRestApiImpl : AppRestApi {
 
     @WorkerThread
-    final override suspend inline fun <T : Any> execute(param: ApiParameter<T>, clazz: KClass<T>): ApiResult<T> {
+    override suspend inline fun <T : Any> execute(param: ApiParameter<T>, clazz: KClass<T>): ApiResult<T> {
         AppLog.info(TAG, "${param.method} ====> $param.url")
 
         val bodyStr =
