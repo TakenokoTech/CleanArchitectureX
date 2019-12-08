@@ -46,7 +46,7 @@ class AsyncUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
     fun callAsync_success() {
         val asyncUsecase = object : AsyncUsecase<String, String>(context, testScope) {
             override suspend fun callAsync(param: String): Deferred<String> = testScope.async(Dispatchers.IO) {
-                Thread.sleep(100)
+                Thread.sleep(1000)
                 return@async ""
             }
         }
@@ -57,7 +57,7 @@ class AsyncUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
             Assert.assertEquals(it.isFinished(), false)
             Assert.assertEquals(it.isLoading(), true)
         }
-        Thread.sleep(200)
+        Thread.sleep(2000)
         checkedObserver(mockObserver) {
             Assert.assertEquals(it.toState(), RESOLVED)
             Assert.assertEquals(it.isFinished(), true)
@@ -69,7 +69,7 @@ class AsyncUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
     fun callAsync_failed() {
         val asyncUsecase = object : AsyncUsecase<String, String>(context, testScope) {
             override suspend fun callAsync(param: String): Deferred<String> = testScope.async(Dispatchers.IO) {
-                Thread.sleep(100)
+                Thread.sleep(1000)
                 throw Exception()
             }
         }
@@ -80,7 +80,7 @@ class AsyncUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
             Assert.assertEquals(it.isFinished(), false)
             Assert.assertEquals(it.isLoading(), true)
         }
-        Thread.sleep(200)
+        Thread.sleep(2000)
         checkedObserver(mockObserver) {
             Assert.assertEquals(it.toState(), REJECTED)
             Assert.assertEquals(it.isFinished(), true)

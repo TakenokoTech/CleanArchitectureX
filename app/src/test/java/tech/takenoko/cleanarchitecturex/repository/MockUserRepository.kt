@@ -7,8 +7,8 @@ import tech.takenoko.cleanarchitecturex.utils.AppLog
 
 class MockUserRepository : UserRepository {
     override suspend fun getAllUser(): List<UserLocalDataSource.User> = allUser
-    override suspend fun addUser(name: String) {
-        AppLog.debug("MockUserRepository", name)
+    override suspend fun addUser(user: UserLocalDataSource.User) {
+        AppLog.debug("MockUserRepository", "$user")
     }
     override fun getAllToLive(): LiveData<List<UserLocalDataSource.User>> = mock {}
 
