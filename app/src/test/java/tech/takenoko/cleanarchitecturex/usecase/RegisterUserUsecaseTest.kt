@@ -21,15 +21,14 @@ import tech.takenoko.cleanarchitecturex.entities.UsecaseResult
 import tech.takenoko.cleanarchitecturex.extension.*
 import tech.takenoko.cleanarchitecturex.repository.MockUserRepository
 import tech.takenoko.cleanarchitecturex.repository.UserRepository
-import tech.takenoko.cleanarchitecturex.repository.local.UserLocalDataSource
 
 @ExperimentalCoroutinesApi
-class LoadUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
+class RegisterUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
 
     @get:Rule
     val rule: TestRule = InstantTaskExecutorRule()
 
-    private val mockObserver = mockObserver<UsecaseResult<List<String>>>()
+    private val mockObserver = mockObserver<UsecaseResult<Unit>>()
 
     @Before
     fun before() {
@@ -42,9 +41,8 @@ class LoadUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
     }
 
     @Test(timeout = 2000)
-    fun callAsync_success_not_null() {
-        MockUserRepository.allUser = listOf(UserLocalDataSource.User("testUid", "testName"))
-        val loadUserUsecase by inject<LoadUserUsecase>()
+    fun callAsync_success() {
+        val loadUserUsecase by inject<RegisterUserUsecase>()
         loadUserUsecase.source.observeForever(mockObserver)
         loadUserUsecase.execute(Unit)
         checkedObserver(mockObserver) {
@@ -54,29 +52,12 @@ class LoadUserUsecaseTest : AutoCloseKoinTest(), LifecycleOwner {
         checkedObserver(mockObserver) {
             val result = it as? UsecaseResult.Resolved
             Assert.assertEquals(it.toState(), RESOLVED)
-            Assert.assertEquals(result?.value, listOf("testName"))
-        }
-    }
-
-    @Test(timeout = 2000)
-    fun callAsync_success_null() {
-        MockUserRepository.allUser = listOf(UserLocalDataSource.User("testUid", null))
-        val loadUserUsecase by inject<LoadUserUsecase>()
-        loadUserUsecase.source.observeForever(mockObserver)
-        loadUserUsecase.execute(Unit)
-        checkedObserver(mockObserver) {
-            Assert.assertEquals(it.toState(), PENDING)
-        }
-        Thread.sleep(1500)
-        checkedObserver(mockObserver) {
-            val result = it as? UsecaseResult.Resolved
-            Assert.assertEquals(it.toState(), RESOLVED)
-            Assert.assertEquals(result?.value, listOf<String>())
+            Assert.assertEquals(result?.value, Unit)
         }
     }
 
     private val mockModule: Module = module {
-        factory { LoadUserUsecase(context, testScope) }
+        factory { RegisterUserUsecase(context, testScope) }
         factory { MockUserRepository() as UserRepository }
     }
 

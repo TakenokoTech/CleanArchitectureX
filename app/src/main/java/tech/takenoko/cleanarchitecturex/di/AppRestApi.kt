@@ -1,7 +1,10 @@
 package tech.takenoko.cleanarchitecturex.di
 
 import androidx.annotation.WorkerThread
+import com.github.kittinunf.fuel.core.Response
 import com.github.kittinunf.fuel.coroutines.awaitResponseResult
+import com.github.kittinunf.result.Result
+import java.lang.Exception
 import kotlin.reflect.KClass
 import tech.takenoko.cleanarchitecturex.BuildConfig
 import tech.takenoko.cleanarchitecturex.entities.ApiParameter
@@ -29,12 +32,12 @@ class AppRestApiImpl : AppRestApi {
             if (param.body != null) OBJECT_MAPPER.adapter(Any::class.java).toJson(param.body) else ""
 
         val requestBuilder = param.call().header(param.header).body(bodyStr)
+        val adapter = param.adapter ?: planeAdapter(clazz.java)
 
-        val (request, response, result) = if (param.adapter != null) {
-            val adapter = param.adapter ?: return ApiResult.Failed(Exception(), 0)
+        val (request, response, result) = runCatching {
             requestBuilder.awaitResponseResult(adapter)
-        } else {
-            requestBuilder.awaitResponseResult(planeAdapter(clazz.java))
+        }.getOrElse {
+            Triple(requestBuilder, Response.error(), Result.error(Exception(it)))
         }
 
         if (BuildConfig.DEBUG) {
@@ -42,16 +45,13 @@ class AppRestApiImpl : AppRestApi {
             AppLog.debug(TAG, "response: $response")
         }
 
-        val responseBody = result.component1()
-        val error = result.component2()
-
-        return if (responseBody != null) {
-            AppLog.debug(TAG, "responseBody: $responseBody")
-            ApiResult.Success(responseBody)
-        } else {
-            AppLog.debug(TAG, "error: ${error?.localizedMessage}")
-            ApiResult.Failed(error ?: IllegalArgumentException(), response.statusCode)
-        }
+        return result.fold({
+            AppLog.debug(TAG, "responseBody: $it")
+            ApiResult.Success(it)
+        }, {
+            AppLog.debug(TAG, "error: ${it.localizedMessage}")
+            ApiResult.Failed(it, response.statusCode)
+        })
     }
 
     companion object {
