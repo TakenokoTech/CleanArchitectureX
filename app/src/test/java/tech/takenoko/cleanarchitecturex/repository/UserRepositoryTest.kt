@@ -18,8 +18,6 @@ import tech.takenoko.cleanarchitecturex.entities.ApiResult
 import tech.takenoko.cleanarchitecturex.entities.Get
 import tech.takenoko.cleanarchitecturex.entities.HttpStatusCode
 import tech.takenoko.cleanarchitecturex.entities.Post
-import tech.takenoko.cleanarchitecturex.entities.response.ResultEntity
-import tech.takenoko.cleanarchitecturex.entities.response.UserEntity
 import tech.takenoko.cleanarchitecturex.entities.room.UserDao
 import tech.takenoko.cleanarchitecturex.extension.checkedObserver
 import tech.takenoko.cleanarchitecturex.extension.mockObserver
@@ -49,8 +47,13 @@ class UserRepositoryTest : AutoCloseKoinTest() {
     @Test
     fun getAllUser_success() = runBlocking {
         // mock api
-        val getUserUrlParam = Get<List<UserEntity>>(url = getUserUrl)
-        val getUserUrlResponse = ApiResult.Success(listOf(UserEntity("testUser", "testDisplay")))
+        val getUserUrlParam = Get<List<UserRemoteDataSource.UserEntity>>(url = getUserUrl)
+        val getUserUrlResponse = ApiResult.Success(listOf(
+            UserRemoteDataSource.UserEntity(
+                "testUser",
+                "testDisplay"
+            )
+        ))
         MockRestApi.response[getUserUrlParam] = getUserUrlResponse
         // mock db
         getAll = listOf(UserLocalDataSource.User("testName", "testName"))
@@ -63,8 +66,8 @@ class UserRepositoryTest : AutoCloseKoinTest() {
     @Test
     fun getAllUser_failed() = runBlocking {
         // mock api
-        val getUserParam = Get<List<UserEntity>>(url = getUserUrl)
-        val getUserResponse = ApiResult.Failed<List<UserEntity>>(failedTestException, HttpStatusCode.INTERNAL_SERVER_ERROR.code)
+        val getUserParam = Get<List<UserRemoteDataSource.UserEntity>>(url = getUserUrl)
+        val getUserResponse = ApiResult.Failed<List<UserRemoteDataSource.UserEntity>>(failedTestException, HttpStatusCode.INTERNAL_SERVER_ERROR.code)
         MockRestApi.response[getUserParam] = getUserResponse
         // mock db
         getAll = listOf(UserLocalDataSource.User("testName", "testName"))
@@ -77,8 +80,11 @@ class UserRepositoryTest : AutoCloseKoinTest() {
     @Test
     fun addUser_success() = runBlocking {
         // mock api
-        val getUserUrlParam = Post<List<UserEntity>>(url = addUserUrl, body = UserEntity("testUser", "testDisplay"))
-        val getUserUrlResponse = ApiResult.Success(ResultEntity("true"))
+        val getUserUrlParam = Post<List<UserRemoteDataSource.UserEntity>>(url = addUserUrl, body = UserRemoteDataSource.UserEntity(
+            "testUser",
+            "testDisplay"
+        ))
+        val getUserUrlResponse = ApiResult.Success(UserRemoteDataSource.ResultEntity("true"))
         MockRestApi.response[getUserUrlParam] = getUserUrlResponse
         // verification
         val userRepository by inject<UserRepository>()
@@ -88,8 +94,11 @@ class UserRepositoryTest : AutoCloseKoinTest() {
     @Test
     fun addUser_failed() = runBlocking {
         // mock api
-        val getUserUrlParam = Post<List<UserEntity>>(url = addUserUrl, body = UserEntity("testUser", "testDisplay"))
-        val getUserUrlResponse = ApiResult.Failed<List<UserEntity>>(failedTestException, HttpStatusCode.INTERNAL_SERVER_ERROR.code)
+        val getUserUrlParam = Post<List<UserRemoteDataSource.UserEntity>>(url = addUserUrl, body = UserRemoteDataSource.UserEntity(
+            "testUser",
+            "testDisplay"
+        ))
+        val getUserUrlResponse = ApiResult.Failed<List<UserRemoteDataSource.UserEntity>>(failedTestException, HttpStatusCode.INTERNAL_SERVER_ERROR.code)
         MockRestApi.response[getUserUrlParam] = getUserUrlResponse
         // verification
         val userRepository by inject<UserRepository>()
