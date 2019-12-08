@@ -17,7 +17,7 @@ class AppRestApiTest : MockHttpTestCase() {
 
     @Test
     fun success() = runBlocking {
-        val restApi = mock<AppRestApiImpl>()
+        val restApi = AppRestApiImpl()
 
         val request = mock<Request> { }
         val param = MockGet(request)
