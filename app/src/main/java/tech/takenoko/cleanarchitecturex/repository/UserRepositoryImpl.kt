@@ -3,7 +3,6 @@ package tech.takenoko.cleanarchitecturex.repository
 import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
-import java.util.UUID
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import tech.takenoko.cleanarchitecturex.entities.response.UserEntity
@@ -20,10 +19,7 @@ class UserRepositoryImpl : UserRepository, KoinComponent {
     override suspend fun getAllUser(): List<UserLocalDataSource.User> {
         AppLog.info(TAG, "getAllUser")
         val users = network.getUser().map {
-            UserLocalDataSource.User(
-                UUID.randomUUID().toString(),
-                it.name
-            )
+            UserLocalDataSource.User(it.user_name, it.display_name)
         }
         local.deleteAll()
         local.insertAll(*users.toTypedArray())
@@ -31,16 +27,11 @@ class UserRepositoryImpl : UserRepository, KoinComponent {
     }
 
     @WorkerThread
-    override suspend fun addUser(name: String) {
+    override suspend fun addUser(user: UserLocalDataSource.User) {
         AppLog.info(TAG, "addUser")
-        val result = network.postUser(user = UserEntity(name))
+        val result = network.postUser(user = UserEntity(user.userName, user.displayName))
         AppLog.info(TAG, "postUser ==> $result")
-        return local.insertAll(
-            UserLocalDataSource.User(
-                UUID.randomUUID().toString(),
-                name
-            )
-        )
+        return local.insertAll(user)
     }
 
     @MainThread

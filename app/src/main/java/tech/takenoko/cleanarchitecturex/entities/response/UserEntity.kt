@@ -1,5 +1,6 @@
 package tech.takenoko.cleanarchitecturex.entities.response
 
 data class UserEntity(
-    val name: String
+    val user_name: String,
+    val display_name: String
 )
