@@ -8,3 +8,12 @@
 Android Clean Architecture
 
 <img src=".github/plantuml/CleanArchitecture.png" />
+
+## appendix
+
+- [Mock Server](./.test/server.js)
+
+<p align="center">
+  <br>
+  <a href=""><strong>Takenoko Tech.</strong></a>
+</p>
