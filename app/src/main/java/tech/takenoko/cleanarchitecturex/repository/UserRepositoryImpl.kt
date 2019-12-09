@@ -5,7 +5,6 @@ import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import tech.takenoko.cleanarchitecturex.entities.response.UserEntity
 import tech.takenoko.cleanarchitecturex.repository.local.UserLocalDataSource
 import tech.takenoko.cleanarchitecturex.repository.remote.UserRemoteDataSource
 import tech.takenoko.cleanarchitecturex.utils.AppLog
@@ -18,18 +17,16 @@ class UserRepositoryImpl : UserRepository, KoinComponent {
     @WorkerThread
     override suspend fun getAllUser(): List<UserLocalDataSource.User> {
         AppLog.info(TAG, "getAllUser")
-        val users = network.getUser().map {
-            UserLocalDataSource.User(it.user_name, it.display_name)
-        }
+        val users = network.getUser()
         local.deleteAll()
-        local.insertAll(*users.toTypedArray())
+        local.insertAll(*users.map { UserLocalDataSource.User(it.userName, it.displayName) }.toTypedArray())
         return local.getAll()
     }
 
     @WorkerThread
     override suspend fun addUser(user: UserLocalDataSource.User) {
         AppLog.info(TAG, "addUser")
-        val result = network.postUser(user = UserEntity(user.userName, user.displayName))
+        val result = network.postUser(user = UserRemoteDataSource.UserEntity(user.userName, user.displayName))
         AppLog.info(TAG, "postUser ==> $result")
         return local.insertAll(user)
     }

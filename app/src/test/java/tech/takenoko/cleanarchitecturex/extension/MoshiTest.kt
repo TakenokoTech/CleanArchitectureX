@@ -54,5 +54,16 @@ class MoshiTest {
         Assert.assertEquals(a4?.get(0)?.param1, null)
     }
 
+    @Test
+    fun mapAdapter_success() {
+        val mapString = mapAdapter<String, String>().deserialize("{\"key1\": \"value1\", \"key2\": \"value2\"}")
+        Assert.assertEquals(mapString?.get("key1"), "value1")
+        Assert.assertEquals(mapString?.get("key2"), "value2")
+
+        val mapA = mapAdapter<String, A>().deserialize("{\"key1\": {\"param1\": \"value1\"}, \"key2\": {\"param1\": \"value2\"}}")
+        Assert.assertEquals(mapA?.get("key1")?.param1, "value1")
+        Assert.assertEquals(mapA?.get("key2")?.param1, "value2")
+    }
+
     data class A(val param1: String)
 }
