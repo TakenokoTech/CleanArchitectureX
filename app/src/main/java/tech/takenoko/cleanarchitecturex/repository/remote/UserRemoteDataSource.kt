@@ -37,7 +37,9 @@ class UserRemoteDataSource : KoinComponent {
             body = user
         )
         return when (val it = restApi.fetch(param)) {
-            is ApiResult.Success -> it.value
+            is ApiResult.Success -> when (it.value.status) {
+                else -> it.value
+            }
             is ApiResult.Failed -> when (it.statusCode) {
                 else -> throw it.cause
             }
